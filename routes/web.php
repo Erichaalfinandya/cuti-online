@@ -19,6 +19,16 @@ use Symfony\Component\HttpKernel\Event\ViewEvent;
 |
 */
 
+// halaman login
+Route::get('/login', function () {
+    return view('login');
+});
+
+// halaman register
+Route::get('/register', function () {
+    return view('register');
+})->name('register');
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->name('dashboard');
