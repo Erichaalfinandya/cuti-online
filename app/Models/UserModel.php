@@ -16,4 +16,5 @@ class UserModel extends Authenticatable
 
     protected $table = 'users';
     protected $guarded =[];
+     protected $guard_name = 'api'; // <-- TAMBAHKAN BARIS INI
 }

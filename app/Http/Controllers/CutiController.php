@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AjukanCutiModel;
 use App\Models\JenisCutiModel;
+use App\Models\UserModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
@@ -44,6 +45,25 @@ class CutiController extends Controller
         // kita hanya menampilkan hasil pengajuan di halaman
         // (nanti ini bisa disimpan ke tabel "cuti")
         return redirect()->route('jatah-cuti.index')->with('success', 'Pengajuan cuti berhasil dikirim!');
+    }
+
+
+    public function getJenisCuti()
+    {
+        $data = JenisCutiModel::all();
+        return response()->json($data);
+    }
+
+    public function getAjukanCuti()
+    {
+        $data = AjukanCutiModel::all();
+        return response()->json($data);
+    }
+
+    public function getUser()
+    {
+        $data = UserModel::all();
+        return response()->json($data);
     }
 
     public function tambah_jenis_cuti(Request $request)
