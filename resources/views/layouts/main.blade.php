@@ -113,13 +113,10 @@
             <!-- Bawah -->
             <div class="mt-10">
                 <p class="text-xs uppercase font-bold text-slate-500 mb-3 tracking-wider">Account Pages</p>
-                <form action="{{ route('logout') }}" method="POST" class="inline">
-                    @csrf
-                    <button type="submit"
-                        class="flex items-center p-3 rounded-xl hover:bg-[#842A3B]/10 hover:text-[#842A3B] text-slate-600 transition">
-                        <i class="fa-solid fa-user mr-3 text-[#842A3B]"></i> Logout
-                    </button>
-                </form>
+                <button id="btnLogout" type="button"
+                    class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition">
+                    Logout
+                </button>
 
             </div>
         </aside>
@@ -159,6 +156,69 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const btnLogout = document.getElementById("btnLogout");
+
+            if (btnLogout) {
+                btnLogout.addEventListener("click", function() {
+                    Swal.fire({
+                        title: "Yakin mau logout?",
+                        text: "Sesi kamu akan diakhiri.",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#d33",
+                        cancelButtonColor: "#3085d6",
+                        confirmButtonText: "Ya, keluar!",
+                        cancelButtonText: "Batal"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            fetch("{{ route('logout') }}", {
+                                    method: "POST",
+                                    headers: {
+                                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                                        "Accept": "application/json",
+                                    },
+                                })
+                                .then(async (response) => {
+                                    const data = await response.json();
+
+                                    if (response.ok && data.status === "success") {
+                                        Swal.fire({
+                                            icon: "success",
+                                            title: "Logout berhasil",
+                                            text: data.message,
+                                            timer: 1500,
+                                            showConfirmButton: false,
+                                        });
+
+                                        setTimeout(() => {
+                                            window.location.href = data.redirect;
+                                        }, 1500);
+                                    } else {
+                                        Swal.fire({
+                                            icon: "error",
+                                            title: "Gagal logout",
+                                            text: data.message ||
+                                                "Terjadi kesalahan.",
+                                        });
+                                    }
+                                })
+                                .catch((error) => {
+                                    console.error(error);
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: "Kesalahan server",
+                                        text: "Coba lagi nanti.",
+                                    });
+                                });
+                        }
+                    });
+                });
+            }
+        });
+    </script>
 
     @stack('scripts')
 </body>
