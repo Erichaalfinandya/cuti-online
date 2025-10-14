@@ -126,6 +126,8 @@ class CutiController extends Controller
         ]);
     }
 
+    // AJUKAN CUTI
+
     public function tambah_ajukan_cuti(Request $request)
     {
         $request->validate([
@@ -140,13 +142,14 @@ class CutiController extends Controller
 
         $data = AjukanCutiModel::create($request->all());
 
+        dd($data);
+
         return response()->json([
             'status' => 'success',
             'message' => 'Pengajuan cuti berhasil ditambahkan!',
             'data' => $data
         ]);
     }
-
 
     public function edit_ajukan_cuti(Request $request, $id)
     {
@@ -169,7 +172,6 @@ class CutiController extends Controller
             'data' => $data
         ]);
     }
-
 
     public function delete_ajukan_cuti($id)
     {

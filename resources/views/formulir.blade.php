@@ -13,29 +13,26 @@
         </div>
 
         <!-- FORM -->
-        <form id="form-cuti">
+        <form id="form-tambah-cuti" method="POST" action="{{ route('tambah_ajukan_cuti') }}" class="space-y-6">
             @csrf
 
             <!-- NAMA PEGAWAI -->
             <div>
-                <label for="nama_pegawai" class="block text-sm font-semibold text-slate-600 mb-1">Nama Pegawai</label>
-                <input type="text" id="nama_pegawai" name="nama_pegawai"
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 shadow-sm focus:ring-2 focus:ring-[#C95A6B]/40 focus:border-[#C95A6B] focus:outline-none transition"
-                    placeholder="Masukkan nama pegawai" required>
+                <label for="user_id" class="block text-sm font-semibold text-slate-600 mb-1">Nama Pegawai</label>
+                <select name="user_id" id="user_id">
+                    <option value="">-- Pilih --</option>
+                    <option value="1">Si A</option>
+                </select>
             </div>
 
             <!-- JENIS CUTI -->
             <div>
-                <label for="jenis_cuti" class="block text-sm font-semibold text-slate-600 mb-1">Jenis Cuti</label>
-                <select id="jenis_cuti" name="jenis_cuti"
+                <label for="jenis_cuti_id" class="block text-sm font-semibold text-slate-600 mb-1">Jenis Cuti</label>
+                <select id="jenis_cuti_id" name="jenis_cuti_id"
                     class="w-full border border-gray-300 rounded-lg px-4 py-2.5 shadow-sm bg-white focus:ring-2 focus:ring-[#C95A6B]/40 focus:border-[#C95A6B] focus:outline-none transition"
                     required>
                     <option value="" disabled selected>Pilih jenis cuti</option>
-                    <option value="Cuti Tahunan">Cuti Tahunan</option>
-                    <option value="Cuti Besar">Cuti Besar</option>
-                    <option value="Cuti Sakit">Cuti Sakit</option>
-                    <option value="Cuti Melahirkan">Cuti Melahirkan</option>
-                    <option value="Cuti di Luar Tanggungan Negara">Cuti di Luar Tanggungan Negara</option>
+                  
                 </select>
             </div>
 
