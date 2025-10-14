@@ -48,22 +48,36 @@ class CutiController extends Controller
     }
 
 
-    public function getJenisCuti()
-    {
-        $data = JenisCutiModel::all();
-        return response()->json($data);
-    }
+
 
     public function getAjukanCuti()
     {
         $data = AjukanCutiModel::all();
-        return response()->json($data);
+        return response()->json(['data' => $data]);
     }
 
     public function getUser()
     {
         $data = UserModel::all();
         return response()->json($data);
+    }
+
+
+    // JENIS CUTI
+    public function getJenisCutiById($id)
+    {
+        $data = JenisCutiModel::find($id);
+        if ($data) {
+            return response()->json(['data' => $data]);
+        } else {
+            return response()->json(['message' => 'Jenis cuti tidak ditemukan'], 404);
+        }
+    }
+
+    public function getJenisCuti()
+    {
+        $data = JenisCutiModel::all();
+        return response()->json(['data' => $data]);
     }
 
     public function tambah_jenis_cuti(Request $request)
@@ -83,7 +97,6 @@ class CutiController extends Controller
         ]);
     }
 
-
     public function edit_jenis_cuti(Request $request, $id)
     {
         $request->validate([
@@ -101,7 +114,6 @@ class CutiController extends Controller
             'data' => $data
         ]);
     }
-
 
     public function delete_jenis_cuti($id)
     {

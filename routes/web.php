@@ -81,9 +81,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/riwayat-cuti', [RiwayatCutiController::class, 'index'])->name('riwayat-cuti.index');
     Route::get('/riwayat-cuti/{id}', [RiwayatCutiController::class, 'show'])->name('riwayat-cuti.show');
 
+    Route::get('/getJenisCuti', [CutiController::class, 'getJenisCuti'])->name('getJenisCuti');
+    Route::get('/getJenisCutiById/{id}', [CutiController::class, 'getJenisCutiById'])->name('getJenisCutiById');
 
     Route::post('/tambah_jenis_cuti', [CutiController::class, 'tambah_jenis_cuti'])->name('tambah_jenis_cuti'); //tambah jenis cuti
-    Route::post('/edit_jenis_cuti', [CutiController::class, 'edit_jenis_cuti'])->name('edit_jenis_cuti'); //tambah jenis cuti
+    Route::post('/edit_jenis_cuti/{id}', [CutiController::class, 'edit_jenis_cuti'])->name('edit_jenis_cuti');
     Route::post('/delete_jenis_cuti/{id}', [CutiController::class, 'delete_jenis_cuti'])->name('delete_jenis_cuti');
 
     Route::post('/tambah_ajukan_cuti', [CutiController::class, 'tambah_ajukan_cuti'])->name('tambah_ajukan_cuti'); //tambah jenis cuti
