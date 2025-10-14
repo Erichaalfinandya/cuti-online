@@ -3,30 +3,43 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    // public function login(Request $request)
-    // {
-    //     $credentials = $request->only('username', 'password');
+    public function index()
+    {
+        return view('login');
+    }
 
-    //     if (Auth::attempt($credentials)) {
-    //         $request->session()->regenerate();
-    //         return redirect()->intended('/index'); // setelah login masuk ke halaman index
-    //     }
+    public function login(Request $request)
+    {
+        $credentials = $request->validate([
+            'nip' => 'required',
+            'password' => 'required',
+        ]);
 
-    //     return back()->withErrors([
-    //         'username' => 'Username atau password salah',
-    //     ]);
-    // }
+        // Log isi credentials
+        Log::info('Data login attempt:', $credentials);
 
-    // public function logout(Request $request)
-    // {
-    //     Auth::logout();
-    //     $request->session()->invalidate();
-    //     $request->session()->regenerateToken();
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            Log::info('Login berhasil untuk NIP: ' . $credentials['nip']);
+            return redirect()->intended('/dashboard');
+        }
 
-    //     return redirect('/login');
-    // }
+        Log::warning('Login gagal untuk NIP: ' . $credentials['nip']);
+        return back()->withErrors([
+            'nip' => 'NIP atau password salah.',
+        ]);
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/');
+    }
 }

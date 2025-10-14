@@ -19,11 +19,14 @@ class RoleSeeder extends Seeder
 
         // Daftar peran yang akan dibuat
         $roles = [
-            'pegawai',
-            'hakim',
-            'panitera',
-            'sekretaris',
-            'wakil ketua',
+            'Ketua Pengadilan Negeri',
+            'Wakil Ketua',
+            'Hakim',
+            'Panitera',
+            'Sekretaris',
+            'Kasubbag',
+            'Panmud',
+            'Pegawai',
         ];
 
         foreach ($roles as $role) {

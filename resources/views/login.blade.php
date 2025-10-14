@@ -24,8 +24,8 @@
             </div>
 
             <!-- Form Login -->
-            {{-- <form action="{{ route('login') }}" method="POST"> --}}
-                <!-- @csrf -->
+            <form action="{{ route('login.post') }}" method="POST">
+                @csrf
                 <div class="mb-4">
                     <label
                         for="nip"
@@ -41,7 +41,7 @@
                         placeholder="Masukkan NIP anda"
                         required
                     />
-                </div>                
+                </div>
 
                 <div class="mb-4">
                     <label
@@ -72,7 +72,7 @@
                 </div>
                 <button
                     type="submit"
-                    class="w-full text-white py-2 rounded-lg font-semibold 
+                    class="w-full text-white py-2 rounded-lg font-semibold
                         bg-gradient-to-r from-[#842A3B] via-[#B94A5B] to-[#C95A6B]
                         hover:from-[#9c3344] hover:via-[#c85568] hover:to-[#d46d7d]
                         transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-[1.03]"

@@ -15,6 +15,11 @@ class UserModel extends Authenticatable
     use HasRoles;
 
     protected $table = 'users';
-    protected $guarded =[];
-     protected $guard_name = 'api'; // <-- TAMBAHKAN BARIS INI
+    protected $guarded = [];
+    protected $guard_name = 'api'; // <-- TAMBAHKAN BARIS INI
+
+    public function getAuthIdentifierName()
+    {
+        return 'nip';
+    }
 }
