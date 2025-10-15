@@ -10,6 +10,7 @@ use Illuminate\Support\Collection;
 
 class CutiController extends Controller
 {
+    
     public function index()
     {
         // Contoh data sementara (nanti bisa dari database)
@@ -46,9 +47,6 @@ class CutiController extends Controller
         // (nanti ini bisa disimpan ke tabel "cuti")
         return redirect()->route('jatah-cuti.index')->with('success', 'Pengajuan cuti berhasil dikirim!');
     }
-
-
-
 
     public function getAjukanCuti()
     {

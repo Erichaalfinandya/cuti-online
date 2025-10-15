@@ -126,4 +126,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/master-jeniscuti', function () {
         return view('master-jeniscuti');
     })->name('master.jeniscuti');
+
+    //ambil data jenis cuti untuk formulir
+    Route::get('/get-jenis-cuti', [CutiController::class, 'getJenisCuti'])->name('getJenisCuti');
+
+    //ambil data nama pegawai untuk formulir
+    Route::get('/get-users', [CutiController::class, 'getUser'])->name('getUser');
+
 });

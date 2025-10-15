@@ -32,7 +32,7 @@
             <div>
                 <!-- Logo -->
                 <div class="flex items-center mb-10 space-x-3">
-                    <img src="/build/assets/img/logo.png" alt="Logo" class="w-10 h-10">
+                    <img src="{{ asset('build/assets/img/logo.png') }}" alt="Logo" class="w-10 h-10">
                     <span class="text-lg font-semibold">Pengadilan Negeri Pamekasan</span>
                 </div>
 
@@ -51,13 +51,13 @@
                         </a>
                     </li>
                     <!-- HOME -->
-                    <li>
+                    {{-- <li>
                         <a href="#"
                             class="flex items-center p-3 rounded-xl transition duration-200
               hover:bg-[#842A3B]/10 hover:text-[#842A3B] text-slate-600">
                             <i class="fa-solid fa-house mr-3 text-[#842A3B]"></i> Home
                         </a>
-                    </li>
+                    </li> --}}
 
                     <!-- FORMULIR -->
                     <li>
@@ -113,43 +113,20 @@
             <!-- Bawah -->
             <div class="mt-10">
                 <p class="text-xs uppercase font-bold text-slate-500 mb-3 tracking-wider">Account Pages</p>
+
                 <button id="btnLogout" type="button"
-                    class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition">
+                    class="flex items-center gap-2 px-4 py-2 rounded-lg text-white font-semibold
+                        bg-gradient-to-r from-[#842A3B] to-[#C95A6B]
+                        hover:from-[#C95A6B] hover:to-[#842A3B]
+                        transition-all duration-300 shadow-md hover:shadow-lg">
+                    <i class="fas fa-sign-out-alt text-sm"></i>
                     Logout
                 </button>
-
             </div>
         </aside>
 
         <!-- MAIN CONTENT -->
         <main class="flex-1 p-6 bg-gray-50">
-            {{-- 🔺 Navbar --}}
-            <div class="flex justify-between items-center mb-6">
-                <div>
-                    <h2 class="text-2xl font-bold text-[#842A3B]">@yield('page-title')</h2>
-                    <p class="text-sm text-gray-500">@yield('page-subtitle', 'Selamat datang di sistem cuti online')</p>
-                </div>
-
-                <div class="flex items-center space-x-4">
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
-                            <i class="fas fa-search"></i>
-                        </span>
-                        <input type="text"
-                            class="pl-10 pr-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#C95A6B]/50"
-                            placeholder="Cari..." />
-                    </div>
-
-                    <button class="text-gray-600 hover:text-[#842A3B]">
-                        <i class="fas fa-bell text-lg"></i>
-                    </button>
-
-                    <div class="flex items-center space-x-2">
-                        <img src="/build/assets/img/profile.jpg" alt="Profile" class="w-8 h-8 rounded-full">
-                        <span class="text-sm font-medium text-gray-700">Admin</span>
-                    </div>
-                </div>
-            </div>
             @yield('content')
         </main>
     </div>

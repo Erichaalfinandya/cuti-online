@@ -15,7 +15,7 @@
 
     <div class="relative bg-white/95 shadow-2xl rounded-2xl w-full max-w-md p-8 backdrop-blur-sm border border-white/40">
         <div class="text-center mb-6">
-            <img src="/build/assets/img/logo.png" alt="Logo" class="mx-auto w-16 mb-3" />
+            <img src="{{ asset('build/assets/img/logo.png') }}" alt="Logo" class="mx-auto w-16 mb-3" />
             <h2 class="text-2xl font-bold text-slate-700">
                 Selamat Datang
             </h2>

@@ -3,7 +3,13 @@
 @section('title', 'Dashboard Pegawai')
 
 @section('content')
-<div x-data="{ openDropdown: null }">
+<div 
+  x-data="{
+    showModal: false,
+    detail: { jenis: '', sisa: '', terpakai: '', mulai: '', akhir: '', status: '' },
+    openDropdown: null
+  }"
+>
 
   {{-- Breadcrumb + Navbar --}}
   <div class="flex justify-between items-center mb-6">
@@ -11,31 +17,10 @@
       <h2 class="text-2xl font-bold text-[#842A3B]">Dashboard</h2>
       <p class="text-sm text-gray-500">Selamat datang di sistem cuti online</p>
     </div>
-
-    <div class="flex items-center space-x-4">
-      <div class="relative">
-        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
-          <i class="fas fa-search"></i>
-        </span>
-        <input
-          type="text"
-          class="pl-10 pr-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#C95A6B]/50"
-          placeholder="Cari..." />
-      </div>
-
-      <button class="text-gray-600 hover:text-[#842A3B]">
-        <i class="fas fa-bell text-lg"></i>
-      </button>
-
-      <div class="flex items-center space-x-2">
-        <img src="/build/assets/img/profile.jpg" alt="Profile" class="w-8 h-8 rounded-full">
-        <span class="text-sm font-medium text-gray-700">Admin</span>
-      </div>
-    </div>
   </div>
 
   @role('Ketua Pengadilan Negeri')
-    <button>Tambah Data</button>
+    {{-- <button>Tambah Data</button> --}}
 @endrole
 
 @role('Pegawai')
@@ -76,77 +61,57 @@
   </div>
 
   {{-- Table + Chart --}}
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-    {{-- Table --}}
-    <div class="bg-white rounded-2xl shadow-md p-6 border border-[#842A3B]/20">
-      <h5 class="font-semibold text-[#842A3B] mb-2">Jatah Cuti</h5>
-      <p class="text-gray-500 text-sm mb-4">Data jatah cuti pegawai</p>
-      <div class="overflow-x-auto">
-        <table class="min-w-full text-sm text-gray-700">
-          <thead>
-            <tr class="border-b bg-[#842A3B]/10 text-[#842A3B]">
-              <th class="text-left py-2 px-3">NO</th>
-              <th class="text-left py-2 px-3">JENIS CUTI</th>
-              <th class="text-left py-2 px-3">TOTAL SISA CUTI</th>
-              <th class="text-left py-2 px-3">TOTAL CUTI TERPAKAI</th>
-              <th class="text-left py-2 px-3">AKSI</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="border-b hover:bg-[#842A3B]/5">
-              <td class="py-2 px-3">1.</td>
-              <td class="py-2 px-3">Cuti Tahunan</td>
-              <td class="py-2 px-3">8 Hari</td>
-              <td class="py-2 px-3">4 Hari</td>
-              <td class="py-2 px-3 relative" x-data="{ open: false }">
-                <button
-                  @click="open = !open"
-                  class="flex items-center justify-between gap-2 bg-[#842A3B] hover:bg-[#C95A6B] text-white font-semibold text-xs px-4 py-1.5 rounded-md">
-                  <span>Aksi</span>
-                  <i class="fa-solid fa-chevron-down text-xs"></i>
-                </button>
-                <div
-                  x-show="open"
-                  @click.outside="open = false"
-                  class="absolute right-0 mt-2 w-32 bg-white rounded-md shadow-lg border border-gray-200 z-50">
-                  <ul class="text-sm text-gray-700 divide-y divide-gray-100">
-                    <li><button class="w-full text-left px-4 py-2 hover:bg-gray-100">Detail</button></li>
-                    <li><button class="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600">Hapus</button></li>
-                  </ul>
-                </div>
-              </td>
-            </tr>
-            <tr class="hover:bg-[#842A3B]/5">
-              <td class="py-2 px-3">2.</td>
-              <td class="py-2 px-3">Cuti Besar</td>
-              <td class="py-2 px-3">12 Hari</td>
-              <td class="py-2 px-3">0 Hari</td>
-              <td class="py-2 px-3 relative" x-data="{ open: false }">
-                <button
-                  @click="open = !open"
-                  class="flex items-center justify-between gap-2 bg-[#842A3B] hover:bg-[#C95A6B] text-white font-semibold text-xs px-4 py-1.5 rounded-md">
-                  <span>Aksi</span>
-                  <i class="fa-solid fa-chevron-down text-xs"></i>
-                </button>
-                <div
-                  x-show="open"
-                  @click.outside="open = false"
-                  class="absolute right-0 mt-2 w-32 bg-white rounded-md shadow-lg border border-gray-200 z-50">
-                  <ul class="text-sm text-gray-700 divide-y divide-gray-100">
-                    <li><button class="w-full text-left px-4 py-2 hover:bg-gray-100">Detail</button></li>
-                    <li><button class="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600">Hapus</button></li>
-                  </ul>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    {{-- Chart --}}
-    <div class="bg-white rounded-2xl shadow-md p-6 border border-[#842A3B]/20">
-      <canvas id="chart-line" height="200"></canvas>
+  <div class="bg-white rounded-2xl shadow-md p-6 mt-8 border border-[#842A3B]/20">
+    <h5 class="font-semibold text-[#842A3B] mb-2">Jatah Cuti</h5>
+    <p class="text-gray-500 text-sm mb-4">Data jatah cuti pegawai</p>
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-sm text-gray-700">
+        <thead>
+          <tr class="border-b bg-[#842A3B]/10 text-[#842A3B]">
+            <th class="text-left py-2 px-3">NO</th>
+            <th class="text-left py-2 px-3">JENIS CUTI</th>
+            <th class="text-left py-2 px-3">TOTAL SISA CUTI</th>
+            <th class="text-left py-2 px-3">TOTAL CUTI TERPAKAI</th>
+            <th class="text-left py-2 px-3">AKSI</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-b hover:bg-[#842A3B]/5">
+            <td class="py-2 px-3">1.</td>
+            <td class="py-2 px-3">Cuti Tahunan</td>
+            <td class="py-2 px-3">8 Hari</td>
+            <td class="py-2 px-3">4 Hari</td>
+            <td class="py-2 px-3">
+              <button 
+                @click="
+                  detail = { jenis: 'Cuti Tahunan', sisa: '8 Hari', terpakai: '4 Hari' };
+                  showModal = true;
+                "
+                class="bg-[#842A3B] hover:bg-[#C95A6B] text-white font-semibold text-xs px-4 py-1.5 rounded-md"
+              >
+                Detail
+              </button>
+            </td>
+          </tr>
+          <tr class="hover:bg-[#842A3B]/5">
+            <td class="py-2 px-3">2.</td>
+            <td class="py-2 px-3">Cuti Besar</td>
+            <td class="py-2 px-3">12 Hari</td>
+            <td class="py-2 px-3">0 Hari</td>
+            <td class="py-2 px-3">
+              <button 
+                @click="
+                  detail = { jenis: 'Cuti Besar', sisa: '12 Hari', terpakai: '0 Hari' };
+                  showModal = true;
+                "
+                class="bg-[#842A3B] hover:bg-[#C95A6B] text-white font-semibold text-xs px-4 py-1.5 rounded-md"
+              >
+                Detail
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
@@ -171,24 +136,17 @@
             <td class="py-2 px-3">10 Jan 2025</td>
             <td class="py-2 px-3">14 Jan 2025</td>
             <td class="py-2 px-3">Cuti Tahunan</td>
-            <td class="py-2 px-3"><span class="text-green-600 font-semibold">Diterima</span></td>
-            <td class="py-2 px-3 relative" x-data="{ open: false }">
-              <button @click="open = !open"
-                class="flex items-center justify-between gap-2 bg-[#842A3B] hover:bg-[#C95A6B] text-white font-semibold text-xs px-4 py-1.5 rounded-md">
-                <span>Aksi</span>
-                <i class="fa-solid fa-chevron-down text-xs"></i>
+            <td class="py-2 px-3 text-green-600 font-semibold">Diterima</td>
+            <td class="py-2 px-3">
+              <button
+                @click="
+                  detail = { jenis: 'Cuti Tahunan', mulai: '10 Jan 2025', akhir: '14 Jan 2025', status: 'Diterima' };
+                  showModal = true;
+                "
+                class="bg-[#842A3B] hover:bg-[#C95A6B] text-white text-xs px-4 py-1.5 rounded-md"
+              >
+                Detail
               </button>
-              <div
-                x-show="open"
-                @click.outside="open = false"
-                class="absolute right-0 mt-2 w-36 bg-white rounded-md shadow-lg border border-gray-200 z-50">
-                <ul class="text-sm text-gray-700 divide-y divide-gray-100">
-                  <li><button class="w-full text-left px-4 py-2 hover:bg-gray-100">Detail</button></li>
-                  <li><button class="w-full text-left px-4 py-2 hover:bg-gray-100 text-green-600">Diterima</button></li>
-                  <li><button class="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600">Ditolak</button></li>
-                  <li><button class="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-600">Hapus</button></li>
-                </ul>
-              </div>
             </td>
           </tr>
 
@@ -197,34 +155,75 @@
             <td class="py-2 px-3">20 Feb 2025</td>
             <td class="py-2 px-3">22 Feb 2025</td>
             <td class="py-2 px-3">Cuti Sakit</td>
-            <td class="py-2 px-3"><span class="text-red-600 font-semibold">Ditolak</span></td>
-            <td class="py-2 px-3 relative" x-data="{ open: false }">
-              <button @click="open = !open"
-                class="flex items-center justify-between gap-2 bg-[#842A3B] hover:bg-[#C95A6B] text-white font-semibold text-xs px-4 py-1.5 rounded-md">
-                <span>Aksi</span>
-                <i class="fa-solid fa-chevron-down text-xs"></i>
+            <td class="py-2 px-3 text-red-600 font-semibold">Ditolak</td>
+            <td class="py-2 px-3">
+              <button
+                @click="
+                  detail = { jenis: 'Cuti Sakit', mulai: '20 Feb 2025', akhir: '22 Feb 2025', status: 'Ditolak' };
+                  showModal = true;
+                "
+                class="bg-[#842A3B] hover:bg-[#C95A6B] text-white text-xs px-4 py-1.5 rounded-md"
+              >
+                Detail
               </button>
-              <div
-                x-show="open"
-                @click.outside="open = false"
-                class="absolute right-0 mt-2 w-36 bg-white rounded-md shadow-lg border border-gray-200 z-50">
-                <ul class="text-sm text-gray-700 divide-y divide-gray-100">
-                  <li><button class="w-full text-left px-4 py-2 hover:bg-gray-100">Detail</button></li>
-                  <li><button class="w-full text-left px-4 py-2 hover:bg-gray-100 text-green-600">Diterima</button></li>
-                  <li><button class="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600">Ditolak</button></li>
-                  <li><button class="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-600">Hapus</button></li>
-                </ul>
-              </div>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
+
+   {{-- MODAL DETAIL CUTI --}}
+   <div 
+   x-show="showModal"
+   x-transition.opacity
+   x-cloak
+   @click.away="showModal = false"
+   class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+ >
+   <div class="bg-white rounded-xl shadow-lg w-96 p-6 relative">
+     <h3 class="text-lg font-semibold text-[#842A3B] mb-4">Detail Cuti</h3>
+
+     <div class="space-y-2 text-sm text-gray-700">
+       <template x-if="detail.jenis">
+         <p><span class="font-semibold">Jenis Cuti:</span> <span x-text="detail.jenis"></span></p>
+       </template>
+       <template x-if="detail.sisa">
+         <p><span class="font-semibold">Sisa Cuti:</span> <span x-text="detail.sisa"></span></p>
+       </template>
+       <template x-if="detail.terpakai">
+         <p><span class="font-semibold">Terpakai:</span> <span x-text="detail.terpakai"></span></p>
+       </template>
+       <template x-if="detail.mulai">
+         <p><span class="font-semibold">Tanggal Mulai:</span> <span x-text="detail.mulai"></span></p>
+       </template>
+       <template x-if="detail.akhir">
+         <p><span class="font-semibold">Tanggal Akhir:</span> <span x-text="detail.akhir"></span></p>
+       </template>
+       <template x-if="detail.status">
+         <p><span class="font-semibold">Status:</span> <span x-text="detail.status"></span></p>
+       </template>
+     </div>
+
+     <div class="mt-5 text-right">
+       <button @click="showModal = false"
+               class="bg-[#842A3B] hover:bg-[#C95A6B] text-white text-sm font-semibold px-4 py-2 rounded-md">
+         Tutup
+       </button>
+     </div>
+
+     <button @click="showModal = false"
+             class="absolute top-2 right-3 text-gray-400 hover:text-[#842A3B] text-lg">
+       &times;
+     </button>
+   </div>
+   </div>
 </div>
 
 {{-- Chart --}}
 @push('scripts')
+<style>[x-cloak]{display:none!important}</style>
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   const ctx = document.getElementById('chart-line').getContext('2d');

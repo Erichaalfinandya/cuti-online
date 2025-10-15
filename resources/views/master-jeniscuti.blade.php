@@ -183,7 +183,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: `/delete_jenis_cuti/${id}`,
+                        url: /delete_jenis_cuti/${id},
                         type: 'POST',
                         data: {
                             _token: '{{ csrf_token() }}'
@@ -282,7 +282,7 @@
             console.log(id);
             // Ambil data cuti by id (kalau perlu isi form modal)
             $.ajax({
-                url: `/getJenisCutiById/${id}`,
+                url: /getJenisCutiById/${id},
                 type: 'GET',
                 success: function(res) {
                     // Pastikan res.data ada
@@ -317,7 +317,7 @@
             const formData = new FormData(this);
 
             $.ajax({
-                url: `/edit_jenis_cuti/${id}`,
+                url: /edit_jenis_cuti/${id},
                 type: 'POST',
                 data: formData,
                 processData: false,

@@ -19,46 +19,44 @@
             <!-- NAMA PEGAWAI -->
             <div>
                 <label for="user_id" class="block text-sm font-semibold text-slate-600 mb-1">Nama Pegawai</label>
-                <select name="user_id" id="user_id">
-                    <option value="">-- Pilih --</option>
-                    <option value="1">Si A</option>
+                <select name="user_id" id="user_id"
+                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 shadow-sm bg-white focus:ring-2 focus:ring-[#C95A6B]/40 focus:border-[#C95A6B] focus:outline-none transition"
+                    required>
+                    <option value="" disabled selected>Pilih pegawai...</option>
                 </select>
-            </div>
+            </div>            
 
             <!-- JENIS CUTI -->
-            <div>
+            <div class="mb-4">
                 <label for="jenis_cuti_id" class="block text-sm font-semibold text-slate-600 mb-1">Jenis Cuti</label>
                 <select id="jenis_cuti_id" name="jenis_cuti_id"
                     class="w-full border border-gray-300 rounded-lg px-4 py-2.5 shadow-sm bg-white focus:ring-2 focus:ring-[#C95A6B]/40 focus:border-[#C95A6B] focus:outline-none transition"
                     required>
                     <option value="" disabled selected>Pilih jenis cuti</option>
-                  
                 </select>
             </div>
 
             <!-- TANGGAL -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label for="tanggal_awal" class="block text-sm font-semibold text-slate-600 mb-1">Tanggal Awal</label>
+                <div class="mb-4">
+                    <label for="tanggal_awal" class="block text-sm font-semibold text-slate-600 mb-1">Tanggal Mulai</label>
                     <input type="date" id="tanggal_awal" name="tanggal_awal"
-                        class="w-full border border-gray-300 rounded-lg px-4 py-2.5 shadow-sm focus:ring-2 focus:ring-[#C95A6B]/40 focus:border-[#C95A6B] focus:outline-none transition"
-                        required>
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#C95A6B]/40 focus:border-[#C95A6B] focus:outline-none"
+                        min="{{ date('Y-m-d') }}" required>
                 </div>
-
-                <div>
+        
+                <div class="mb-4">
                     <label for="tanggal_akhir" class="block text-sm font-semibold text-slate-600 mb-1">Tanggal Akhir</label>
                     <input type="date" id="tanggal_akhir" name="tanggal_akhir"
-                        class="w-full border border-gray-300 rounded-lg px-4 py-2.5 shadow-sm focus:ring-2 focus:ring-[#C95A6B]/40 focus:border-[#C95A6B] focus:outline-none transition"
-                        required>
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#C95A6B]/40 focus:border-[#C95A6B] focus:outline-none"
+                        min="{{ date('Y-m-d') }}" required>
                 </div>
             </div>
 
             <!-- JUMLAH HARI -->
             <div>
                 <label for="jumlah_hari" class="block text-sm font-semibold text-slate-600 mb-1">Jumlah Hari</label>
-                <input type="number" id="jumlah_hari" name="jumlah_hari" min="1"
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 shadow-sm focus:ring-2 focus:ring-[#C95A6B]/40 focus:border-[#C95A6B] focus:outline-none transition"
-                    placeholder="Masukkan jumlah hari cuti" required>
+                <input type="number" id="jumlah_hari" name="jumlah_hari" min="1" readonly class="w-full bg-gray-100 cursor-not-allowed border border-gray-300 rounded-lg px-4 py-2.5 shadow-sm focus:outline-none" placeholder="Jumlah hari cuti otomatis muncul">
             </div>
 
             <!-- KETERANGAN -->
@@ -86,6 +84,9 @@
 
     <!-- ANIMASI HALUS SAAT HALAMAN MUNCUL -->
     @push('scripts')
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
         <script>
             document.addEventListener('DOMContentLoaded', () => {
                 const formCard = document.querySelector('.max-w-4xl');
@@ -94,6 +95,77 @@
                     formCard.classList.remove('opacity-0', 'translate-y-4');
                     formCard.classList.add('transition', 'duration-500', 'ease-out');
                 }, 100);
+
+                 // === Batasi agar tanggal tidak bisa sebelum hari ini ===
+                const today = new Date().toISOString().split('T')[0];
+                const tanggalAwal = document.getElementById('tanggal_awal');
+                const tanggalAkhir = document.getElementById('tanggal_akhir');
+                const jumlahHari = document.getElementById('jumlah_hari');
+
+                if (tanggalAwal && tanggalAkhir) {
+                    tanggalAwal.setAttribute('min', today);
+                    tanggalAkhir.setAttribute('min', today);
+                }
+
+                // === Hitung jumlah hari otomatis ===
+                function hitungHari() {
+                    const start = new Date(tanggalAwal.value);
+                    const end = new Date(tanggalAkhir.value);
+
+                    if (tanggalAwal.value && tanggalAkhir.value && end >= start) {
+                        const diffTime = end - start;
+                        const diffDays = diffTime / (1000 * 60 * 60 * 24) + 1; // +1 agar inklusif
+                        jumlahHari.value = diffDays;
+                    } else {
+                        jumlahHari.value = '';
+                    }
+                }
+
+                tanggalAwal.addEventListener('change', hitungHari);
+                tanggalAkhir.addEventListener('change', hitungHari);
+
+                // === Ambil data Jenis Cuti dari Controller via AJAX ===
+                $.ajax({
+                    url: "{{ route('getJenisCuti') }}",
+                    type: "GET",
+                    success: function(response) {
+                        if (response.data && response.data.length > 0) {
+                            let select = $("#jenis_cuti_id");
+                            select.empty();
+                            select.append(`<option value="" disabled selected>Pilih jenis cuti</option>`);
+
+                            response.data.forEach(item => {
+                                select.append(`<option value="${item.id}">${item.nama_cuti}</option>`);
+                            });
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error("Gagal mengambil data jenis cuti:", xhr);
+                    }
+                });
+
+                // === AMBIL DATA PEGAWAI ===
+                $.ajax({
+                    url: "{{ route('getUser') }}",
+                    type: "GET",
+                    success: function(response) {
+                        let select = $("#user_id");
+                        select.empty().append(`<option value="" disabled selected>Pilih pegawai...</option>`);
+                        response.forEach(user => {
+                            select.append(`<option value="${user.id}">${user.nama}</option>`);
+                        });
+
+                        // aktifkan Select2 agar bisa search nama
+                        select.select2({
+                            placeholder: "Cari nama pegawai...",
+                            allowClear: true,
+                            width: '100%'
+                        });
+                    },
+                    error: function() {
+                        console.error("Gagal mengambil data pegawai");
+                    }
+                });
             });
         </script>
     @endpush
