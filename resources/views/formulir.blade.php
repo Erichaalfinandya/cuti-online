@@ -15,13 +15,16 @@
         <!-- FORM -->
         <form id="form-tambah-cuti" method="POST" action="{{ route('tambah_ajukan_cuti') }}" class="space-y-6">
             @csrf
-
+            <input type="hidden" name="status" value="0">
             <!-- NAMA PEGAWAI -->
             <div>
                 <label for="user_id" class="block text-sm font-semibold text-slate-600 mb-1">Nama Pegawai</label>
-                <select name="user_id" id="user_id">
+                <select name="user_id" id="user_id"
+                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 shadow-sm bg-white focus:ring-2 focus:ring-[#C95A6B]/40 focus:border-[#C95A6B] focus:outline-none transition">
                     <option value="">-- Pilih --</option>
-                    <option value="1">Si A</option>
+                    @foreach ($dataUser as $u)
+                        <option value="{{ $u->id }}">{{ $u->nama }}</option>
+                    @endforeach
                 </select>
             </div>
 
@@ -32,7 +35,10 @@
                     class="w-full border border-gray-300 rounded-lg px-4 py-2.5 shadow-sm bg-white focus:ring-2 focus:ring-[#C95A6B]/40 focus:border-[#C95A6B] focus:outline-none transition"
                     required>
                     <option value="" disabled selected>Pilih jenis cuti</option>
-                  
+                    @foreach ($dataJenisCuti as $u)
+                        <option value="{{ $u->id }}">{{ $u->nama_cuti }}</option>
+                    @endforeach
+
                 </select>
             </div>
 

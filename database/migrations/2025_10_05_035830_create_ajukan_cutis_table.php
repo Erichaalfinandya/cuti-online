@@ -19,6 +19,7 @@ return new class extends Migration
             $table->date('tanggal_akhir');
             $table->integer('jumlah_hari');
             $table->text('keterangan')->nullable();
+             $table->string('status')->default(0);
             $table->timestamps();
         });
     }

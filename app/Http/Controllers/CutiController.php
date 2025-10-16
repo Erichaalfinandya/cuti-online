@@ -50,11 +50,7 @@ class CutiController extends Controller
 
 
 
-    public function getAjukanCuti()
-    {
-        $data = AjukanCutiModel::all();
-        return response()->json(['data' => $data]);
-    }
+
 
     public function getUser()
     {
@@ -127,6 +123,32 @@ class CutiController extends Controller
     }
 
     // AJUKAN CUTI
+    public function ajukan_cuti()
+    {
+        $userModel = new UserModel();
+        $jenisCutiModel = new JenisCutiModel();
+
+        $dataUser = $userModel::all();
+        $dataJenisCuti = $jenisCutiModel::all();
+
+        return view('/formulir', compact('dataUser', 'dataJenisCuti'));
+    }
+
+        public function getAjukanCuti()
+    {
+        $data = AjukanCutiModel::all();
+        return response()->json(['data' => $data]);
+    }
+
+    public function getAjukanCutiById($id)
+    {
+        $data = AjukanCutiModel::find($id);
+        if ($data) {
+            return response()->json(['data' => $data]);
+        } else {
+            return response()->json(['message' => 'Pengajuan cuti tidak ditemukan'], 404);
+        }
+    }
 
     public function tambah_ajukan_cuti(Request $request)
     {
@@ -137,12 +159,11 @@ class CutiController extends Controller
             'tanggal_akhir' => 'required|date|after_or_equal:tanggal_awal',
             'jumlah_hari' => 'required|integer',
             'keterangan' => 'nullable|string|max:255',
+            'status' => 'string'
         ]);
 
 
         $data = AjukanCutiModel::create($request->all());
-
-        dd($data);
 
         return response()->json([
             'status' => 'success',
@@ -160,6 +181,7 @@ class CutiController extends Controller
             'tanggal_akhir' => 'required|date|after_or_equal:tanggal_awal',
             'jumlah_hari' => 'required|integer',
             'keterangan' => 'nullable|string|max:255',
+            'status' => 'string'
         ]);
 
 

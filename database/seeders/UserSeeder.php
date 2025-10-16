@@ -14,17 +14,22 @@ class UserSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run(): void
-    {
-        $users = UserModel::all();
+  public function run(): void
+{
+    $users = UserModel::all();
 
-        foreach ($users as $user) {
-            if ($user->jabatan) {
-                $role = Role::where('name', $user->jabatan)->first();
-                if ($role) {
-                    $user->syncRoles([$role->name]);
-                }
+    foreach ($users as $user) {
+        if ($user->golongan) {
+            $normalized = strtolower(str_replace(' ', '_', trim($user->golongan)));
+            $role = Role::where('name', $normalized)->first();
+
+            if ($role) {
+                $user->syncRoles([$role->name]);
+                echo "✅ Assigned {$role->name} to {$user->nama}\n";
+            } else {
+                echo "⚠️ Role {$normalized} tidak ditemukan untuk user {$user->nama}\n";
             }
         }
     }
+}
 }
