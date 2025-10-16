@@ -32,7 +32,7 @@
             <div>
                 <!-- Logo -->
                 <div class="flex items-center mb-10 space-x-3">
-                    <img src="{{ asset('build/assets/img/logo.png') }}" alt="Logo" class="w-10 h-10">
+                    <img src="{{ asset('logo-pengadilan-pamekasan.jpg') }}" alt="Logo" class="w-10 h-10">
                     <span class="text-lg font-semibold">Pengadilan Negeri Pamekasan</span>
                 </div>
 

@@ -3,7 +3,7 @@
 @section('title', 'Dashboard Pegawai')
 
 @section('content')
-<div 
+<div
   x-data="{
     showModal: false,
     detail: { jenis: '', sisa: '', terpakai: '', mulai: '', akhir: '', status: '' },
@@ -15,7 +15,6 @@
   <div class="flex justify-between items-center mb-6">
     <div>
       <h2 class="text-2xl font-bold text-[#842A3B]">Dashboard</h2>
-      <p class="text-sm text-gray-500">Selamat datang di sistem cuti online</p>
     </div>
   </div>
 
@@ -82,7 +81,7 @@
             <td class="py-2 px-3">8 Hari</td>
             <td class="py-2 px-3">4 Hari</td>
             <td class="py-2 px-3">
-              <button 
+              <button
                 @click="
                   detail = { jenis: 'Cuti Tahunan', sisa: '8 Hari', terpakai: '4 Hari' };
                   showModal = true;
@@ -99,7 +98,7 @@
             <td class="py-2 px-3">12 Hari</td>
             <td class="py-2 px-3">0 Hari</td>
             <td class="py-2 px-3">
-              <button 
+              <button
                 @click="
                   detail = { jenis: 'Cuti Besar', sisa: '12 Hari', terpakai: '0 Hari' };
                   showModal = true;
@@ -174,7 +173,7 @@
   </div>
 
    {{-- MODAL DETAIL CUTI --}}
-   <div 
+   <div
    x-show="showModal"
    x-transition.opacity
    x-cloak
