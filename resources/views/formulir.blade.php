@@ -15,7 +15,7 @@
         <!-- FORM -->
         <form id="form-tambah-cuti" method="POST" action="{{ route('tambah_ajukan_cuti') }}" class="space-y-6">
             @csrf
-
+            <input type="hidden" name="status" value="1">
             <!-- NAMA PEGAWAI -->
             <div>
                 <label for="user_id" class="block text-sm font-semibold text-slate-600 mb-1">Nama Pegawai</label>
@@ -24,7 +24,7 @@
                     required>
                     <option value="" disabled selected>Pilih pegawai...</option>
                 </select>
-            </div>            
+            </div>
 
             <!-- JENIS CUTI -->
             <div class="mb-4">
@@ -44,7 +44,7 @@
                         class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#C95A6B]/40 focus:border-[#C95A6B] focus:outline-none"
                         min="{{ date('Y-m-d') }}" required>
                 </div>
-        
+
                 <div class="mb-4">
                     <label for="tanggal_akhir" class="block text-sm font-semibold text-slate-600 mb-1">Tanggal Akhir</label>
                     <input type="date" id="tanggal_akhir" name="tanggal_akhir"
@@ -56,7 +56,9 @@
             <!-- JUMLAH HARI -->
             <div>
                 <label for="jumlah_hari" class="block text-sm font-semibold text-slate-600 mb-1">Jumlah Hari</label>
-                <input type="number" id="jumlah_hari" name="jumlah_hari" min="1" readonly class="w-full bg-gray-100 cursor-not-allowed border border-gray-300 rounded-lg px-4 py-2.5 shadow-sm focus:outline-none" placeholder="Jumlah hari cuti otomatis muncul">
+                <input type="number" id="jumlah_hari" name="jumlah_hari" min="1" readonly
+                    class="w-full bg-gray-100 cursor-not-allowed border border-gray-300 rounded-lg px-4 py-2.5 shadow-sm focus:outline-none"
+                    placeholder="Jumlah hari cuti otomatis muncul">
             </div>
 
             <!-- KETERANGAN -->
@@ -84,9 +86,9 @@
 
     <!-- ANIMASI HALUS SAAT HALAMAN MUNCUL -->
     @push('scripts')
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
         <script>
             document.addEventListener('DOMContentLoaded', () => {
                 const formCard = document.querySelector('.max-w-4xl');
@@ -96,33 +98,14 @@
                     formCard.classList.add('transition', 'duration-500', 'ease-out');
                 }, 100);
 
-                 // === Batasi agar tanggal tidak bisa sebelum hari ini ===
                 const today = new Date().toISOString().split('T')[0];
                 const tanggalAwal = document.getElementById('tanggal_awal');
                 const tanggalAkhir = document.getElementById('tanggal_akhir');
                 const jumlahHari = document.getElementById('jumlah_hari');
+                let maxHari = 0; // jumlah hari dari jenis cuti
 
-                if (tanggalAwal && tanggalAkhir) {
-                    tanggalAwal.setAttribute('min', today);
-                    tanggalAkhir.setAttribute('min', today);
-                }
-
-                // === Hitung jumlah hari otomatis ===
-                function hitungHari() {
-                    const start = new Date(tanggalAwal.value);
-                    const end = new Date(tanggalAkhir.value);
-
-                    if (tanggalAwal.value && tanggalAkhir.value && end >= start) {
-                        const diffTime = end - start;
-                        const diffDays = diffTime / (1000 * 60 * 60 * 24) + 1; // +1 agar inklusif
-                        jumlahHari.value = diffDays;
-                    } else {
-                        jumlahHari.value = '';
-                    }
-                }
-
-                tanggalAwal.addEventListener('change', hitungHari);
-                tanggalAkhir.addEventListener('change', hitungHari);
+                tanggalAwal.setAttribute('min', today);
+                tanggalAkhir.setAttribute('min', today);
 
                 // === Ambil data Jenis Cuti dari Controller via AJAX ===
                 $.ajax({
@@ -134,13 +117,65 @@
                             select.empty();
                             select.append(`<option value="" disabled selected>Pilih jenis cuti</option>`);
 
+                            // Tambahkan jumlah_hari di data-attribute
                             response.data.forEach(item => {
-                                select.append(`<option value="${item.id}">${item.nama_cuti}</option>`);
+                                select.append(
+                                    `<option value="${item.id}" data-jumlah_hari="${item.jumlah_hari}">${item.nama_cuti}</option>`
+                                );
                             });
                         }
                     },
                     error: function(xhr) {
                         console.error("Gagal mengambil data jenis cuti:", xhr);
+                    }
+                });
+
+                // === Simpan jumlah_hari ke variabel saat jenis cuti dipilih ===
+                $("#jenis_cuti_id").on("change", function() {
+                    maxHari = parseInt($(this).find(":selected").data("jumlah_hari")) || 0;
+                    $("#jumlah_hari").val("");
+                    $("#tanggal_awal, #tanggal_akhir").val("");
+                });
+
+                // === Hitung jumlah hari dan validasi batas maksimal ===
+                function hitungHari() {
+                    const start = new Date(tanggalAwal.value);
+                    const end = new Date(tanggalAkhir.value);
+
+                    if (!tanggalAwal.value || !tanggalAkhir.value) {
+                        jumlahHari.value = "";
+                        return;
+                    }
+
+                    let diff = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+
+                    if (diff <= 0) {
+                        alert("Tanggal akhir tidak boleh sebelum tanggal mulai.");
+                        tanggalAkhir.value = "";
+                        jumlahHari.value = "";
+                        return;
+                    }
+
+                    if (maxHari > 0 && diff > maxHari) {
+                        alert(`Maksimal cuti hanya ${maxHari} hari.`);
+                        tanggalAkhir.value = "";
+                        jumlahHari.value = "";
+                        return;
+                    }
+
+                    jumlahHari.value = diff;
+                }
+
+                tanggalAwal.addEventListener("change", hitungHari);
+                tanggalAkhir.addEventListener("change", hitungHari);
+
+                // === Batasi tanggal akhir sesuai maxHari ===
+                $("#tanggal_awal").on("change", function() {
+                    if (maxHari > 0) {
+                        let start = new Date($(this).val());
+                        start.setDate(start.getDate() + (maxHari - 1));
+                        let maxDate = start.toISOString().split("T")[0];
+                        $("#tanggal_akhir").attr("max", maxDate);
                     }
                 });
 
@@ -150,7 +185,8 @@
                     type: "GET",
                     success: function(response) {
                         let select = $("#user_id");
-                        select.empty().append(`<option value="" disabled selected>Pilih pegawai...</option>`);
+                        select.empty().append(
+                            `<option value="" disabled selected>Pilih pegawai...</option>`);
                         response.forEach(user => {
                             select.append(`<option value="${user.id}">${user.nama}</option>`);
                         });
@@ -165,6 +201,36 @@
                     error: function() {
                         console.error("Gagal mengambil data pegawai");
                     }
+                });
+                // === Submit via AJAX ===
+                $("#form-tambah-cuti").on("submit", function(e) {
+                    e.preventDefault();
+
+                    const formData = $(this).serialize();
+
+                    $.ajax({
+                        url: "{{ route('tambah_ajukan_cuti') }}",
+                        type: "POST",
+                        data: formData,
+                        success: function(response) {
+                            Swal.fire({
+                                title: "Berhasil!",
+                                text: "Pengajuan cuti berhasil dikirim.",
+                                icon: "success",
+                                confirmButtonText: "OK"
+                            }).then(() => {
+                                window.location.href = "{{ url('/dashboard') }}";
+                            });
+                        },
+                        error: function(xhr) {
+                            console.log(xhr);
+                            let msg = "Terjadi kesalahan saat mengirim data.";
+                            if (xhr.responseJSON && xhr.responseJSON.message) {
+                                msg = xhr.responseJSON.message;
+                            }
+                            Swal.fire("Gagal", msg, "error");
+                        }
+                    });
                 });
             });
         </script>

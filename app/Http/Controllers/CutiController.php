@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 
 class CutiController extends Controller
 {
-    
+
     public function index()
     {
         // Contoh data sementara (nanti bisa dari database)
@@ -134,13 +134,14 @@ class CutiController extends Controller
             'tanggal_awal' => 'required|date|before_or_equal:tanggal_akhir',
             'tanggal_akhir' => 'required|date|after_or_equal:tanggal_awal',
             'jumlah_hari' => 'required|integer',
+            'status' => 'required|integer',
             'keterangan' => 'nullable|string|max:255',
         ]);
 
 
         $data = AjukanCutiModel::create($request->all());
 
-        dd($data);
+        // dd($data);
 
         return response()->json([
             'status' => 'success',
@@ -157,6 +158,7 @@ class CutiController extends Controller
             'tanggal_awal' => 'required|date|before_or_equal:tanggal_akhir',
             'tanggal_akhir' => 'required|date|after_or_equal:tanggal_awal',
             'jumlah_hari' => 'required|integer',
+            'status' => 'required|integer',
             'keterangan' => 'nullable|string|max:255',
         ]);
 

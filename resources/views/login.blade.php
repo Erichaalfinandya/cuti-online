@@ -9,7 +9,8 @@
 </head>
 
 <body class="relative flex items-center justify-center min-h-screen bg-cover bg-center"
-    style="background-image: url('/build/assets/img/kantordepan.jpg');">
+    style="background-image: url('{{ asset('bg-login.jpg') }}');">
+
     <!-- Overlay gelap agar teks/form tetap terbaca -->
     <div class="absolute inset-0 bg-black/40 backdrop-blur-[2px]"></div>
 

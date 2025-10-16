@@ -139,7 +139,13 @@
 
         $(document).ready(function() {
             tabelCuti = $('#tabelCuti').DataTable({
-                ajax: "{{ route('getJenisCuti') }}",
+                ajax: {
+                    url: "{{ route('getJenisCuti') }}",
+                    dataSrc: function(json) {
+                        console.log('Response dari server:', json); // biar keliatan
+                        return json.data || []; // ambil array di dalam 'data'
+                    }
+                },
                 columns: [{
                         data: null,
                         render: (data, type, row, meta) => meta.row + 1
@@ -183,7 +189,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: /delete_jenis_cuti/${id},
+                        url: `/delete_jenis_cuti/${id}`,
                         type: 'POST',
                         data: {
                             _token: '{{ csrf_token() }}'
@@ -278,13 +284,15 @@
     <script>
         // Event edit
         $(document).on('click', '.edit-btn', function() {
+            // alert('Klik terdeteksi!');
             const id = $(this).data('id');
             console.log(id);
             // Ambil data cuti by id (kalau perlu isi form modal)
             $.ajax({
-                url: /getJenisCutiById/${id},
+                url: `/getJenisCutiById/${id}`,
                 type: 'GET',
                 success: function(res) {
+                    console.log(res);
                     // Pastikan res.data ada
                     const data = res.data;
 
@@ -317,7 +325,7 @@
             const formData = new FormData(this);
 
             $.ajax({
-                url: /edit_jenis_cuti/${id},
+                url: `/edit_jenis_cuti/${id}`,
                 type: 'POST',
                 data: formData,
                 processData: false,
