@@ -72,6 +72,7 @@
                         </a>
                     </li>
                     <!-- JATAH CUTI -->
+                    @role('kepegawaian')
                     <li>
                         <a href="{{ route('jatah-cuti') }}"
                             class="flex items-center p-3 rounded-xl transition duration-200
@@ -83,19 +84,21 @@
                             Jatah Cuti
                         </a>
                     </li>
+                    @endrole
                     <!-- RIWAYAT CUTI -->
                     <li>
-                        <a href="{{ route('riwayat-cuti.index') }}"
+                        <a href="{{ route('ajukan_cuti') }}"
                             class="flex items-center p-3 rounded-xl transition duration-200
-              {{ request()->routeIs('riwayat-cuti.index')
+              {{ request()->routeIs('ajukan_cuti')
                   ? 'bg-gradient-to-r from-[#842A3B] to-[#C95A6B] text-white shadow-md'
                   : 'hover:bg-[#842A3B]/10 hover:text-[#842A3B] text-slate-600' }}">
                             <i
-                                class="fa-solid fa-clock-rotate-left mr-3 {{ request()->routeIs('riwayat-cuti.index') ? 'text-white' : 'text-[#842A3B]' }}"></i>
+                                class="fa-solid fa-clock-rotate-left mr-3 {{ request()->routeIs('ajukan_cuti') ? 'text-white' : 'text-[#842A3B]' }}"></i>
                             Riwayat Cuti
                         </a>
                     </li>
                     <!-- MASTER JENIS CUTI -->
+                    @role('kepegawaian')
                     <li>
                         <a href="{{ route('master.jeniscuti') }}"
                             class="flex items-center p-3 rounded-xl transition duration-200
@@ -107,6 +110,7 @@
                             Master Jenis Cuti
                         </a>
                     </li>
+                    @endrole
                 </ul>
             </div>
 

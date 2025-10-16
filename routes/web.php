@@ -32,6 +32,10 @@ Route::middleware('auth')->group(function () {
         return view('formulir');
     })->name('formulir');
 
+        Route::get('/ajukan_cuti', function () {
+        return view('ajukan_cuti');
+    })->name('ajukan_cuti');
+
     //mengarah ke jatah cuti
     Route::get('/jatah-cuti', function () {
         $jatahCuti = [
@@ -90,9 +94,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/delete_jenis_cuti/{id}', [CutiController::class, 'delete_jenis_cuti'])->name('delete_jenis_cuti');
 
     //ajukan cuti
+    Route::get('/getAjukanCuti', [CutiController::class, 'getAjukanCuti'])->name('getAjukanCuti');
     Route::post('/tambah_ajukan_cuti', [CutiController::class, 'tambah_ajukan_cuti'])->name('tambah_ajukan_cuti'); //tambah jenis cuti
     Route::post('/edit_ajukan_cuti', [CutiController::class, 'edit_ajukan_cuti'])->name('edit_ajukan_cuti'); //tambah jenis cuti
     Route::post('/delete_ajukan_cuti/{id}', [CutiController::class, 'delete_ajukan_cuti'])->name('delete_ajukan_cuti');
+
+    //ajukan cuti
+    Route::get('/getJatahCuti', [CutiController::class, 'getJatahCuti'])->name('getJatahCuti');
 
     //mengarah ke halaman data pegawai
     Route::get('/data-pegawai', function () {

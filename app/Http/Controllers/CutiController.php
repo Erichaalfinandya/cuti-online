@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AjukanCutiModel;
-use App\Models\JenisCutiModel;
 use App\Models\UserModel;
 use Illuminate\Http\Request;
+use App\Models\JenisCutiModel;
+use App\Models\AjukanCutiModel;
+use App\Models\JatahCutiModel;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class CutiController extends Controller
 {
@@ -50,14 +52,15 @@ class CutiController extends Controller
 
     public function getAjukanCuti()
     {
-        $data = AjukanCutiModel::all();
-        return response()->json(['data' => $data]);
+        // $data = AjukanCutiModel::all();
+          $cutis = AjukanCutiModel::with('user', 'jenisCuti')->get();
+        return response()->json(['data' => $cutis]);
     }
 
     public function getUser()
     {
         $data = UserModel::all();
-        return response()->json($data);
+        return response()->json(['data' => $data]);
     }
 
 
@@ -78,22 +81,56 @@ class CutiController extends Controller
         return response()->json(['data' => $data]);
     }
 
+    // public function tambah_jenis_cuti(Request $request)
+    // {
+    //     $request->validate([
+    //         'nama_cuti' => 'required|string|max:50',
+    //         'jumlah_hari' => 'required|integer',
+    //         'keterangan' => 'nullable|string|max:255',
+    //     ]);
+
+    //     $data = JenisCutiModel::create($request->all());
+
+    //     return response()->json([
+    //         'status' => 'success',
+    //         'message' => 'Jenis cuti berhasil ditambahkan!',
+    //         'data' => $data
+    //     ]);
+    // }
+
     public function tambah_jenis_cuti(Request $request)
-    {
-        $request->validate([
-            'nama_cuti' => 'required|string|max:50',
-            'jumlah_hari' => 'required|integer',
-            'keterangan' => 'nullable|string|max:255',
-        ]);
+{
+    $request->validate([
+        'nama_cuti' => 'required|string|max:50',
+        'jumlah_hari' => 'required|integer',
+        'keterangan' => 'nullable|string|max:255',
+    ]);
 
-        $data = JenisCutiModel::create($request->all());
+    // Tambah jenis cuti
+    $jenisCuti = JenisCutiModel::create($request->all());
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Jenis cuti berhasil ditambahkan!',
-            'data' => $data
+    // Ambil semua user
+    $users = UserModel::all();
+
+    // Buat jatah cuti untuk setiap user
+    foreach ($users as $user) {
+        DB::table('jatah_cutis')->insert([
+            'user_id' => $user->id,
+            'jenis_cuti_id' => $jenisCuti->id,
+            'cuti_terpakai' => 0,
+            'sisa_cuti' => $jenisCuti->jumlah_hari, // otomatis sesuai jumlah_hari
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
+
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Jenis cuti berhasil ditambahkan dan jatah cuti untuk semua user dibuat!',
+        'data' => $jenisCuti
+    ]);
+}
+
 
     public function edit_jenis_cuti(Request $request, $id)
     {
@@ -182,5 +219,13 @@ class CutiController extends Controller
             'status' => 'success',
             'message' => 'Pengajuan cuti berhasil dihapus!'
         ]);
+    }
+
+    //JATAH CUTI
+
+    public function getJatahCuti()
+    {
+        $data = JatahCutiModel::all();
+        return response()->json(['data' => $data]);
     }
 }

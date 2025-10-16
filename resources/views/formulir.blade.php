@@ -219,7 +219,7 @@
                                 icon: "success",
                                 confirmButtonText: "OK"
                             }).then(() => {
-                                window.location.href = "{{ url('/dashboard') }}";
+                                window.location.href = "{{ url('/ajukan_cuti') }}";
                             });
                         },
                         error: function(xhr) {
