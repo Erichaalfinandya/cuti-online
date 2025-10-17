@@ -218,7 +218,7 @@
                                 timer: 1500,
                                 showConfirmButton: false,
                             }).then(() => {
-                                window.location.href = "{{ url('/ajukan_cuti') }}";
+                                window.location.href = "{{ url('/list_ajukan_cuti') }}";
                             });
                         } else {
                             Swal.fire({

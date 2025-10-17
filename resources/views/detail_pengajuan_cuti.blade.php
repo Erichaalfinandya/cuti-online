@@ -1,103 +1,6 @@
 @extends('layouts.main')
 
 @section('title', 'Jatah Cuti')
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background: #f5f5f5;
-        padding: 20px;
-    }
-
-    .container {
-        max-width: 500px;
-        margin: auto;
-        background: #fff;
-        border-radius: 10px;
-        padding: 20px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    h2 {
-        text-align: center;
-        margin-bottom: 10px;
-    }
-
-    p.description {
-        text-align: center;
-        color: #555;
-        font-size: 14px;
-        margin-bottom: 20px;
-    }
-
-    select {
-        width: 100%;
-        padding: 8px;
-        margin-bottom: 20px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-    }
-
-    .timeline {
-        position: relative;
-        padding-left: 30px;
-        border-left: 3px solid #ccc;
-    }
-
-    .timeline::before {
-        content: '';
-        position: absolute;
-        left: -3px;
-        top: 0;
-        bottom: 0;
-        width: 3px;
-        background: #ccc;
-    }
-
-    .timeline-item {
-        position: relative;
-        margin-bottom: 20px;
-        padding-left: 10px;
-    }
-
-    .timeline-item:last-child {
-        margin-bottom: 0;
-    }
-
-    .timeline-dot {
-        position: absolute;
-        left: -16px;
-        top: 0;
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-    }
-
-    .dot-yellow {
-        background: #f6c23e;
-    }
-
-    .dot-green {
-        background: #1cc88a;
-    }
-
-    .dot-purple {
-        background: #6f42c1;
-    }
-
-    .dot-red {
-        background: #e74a3b;
-    }
-
-    .timeline-item h4 {
-        margin: 0 0 2px;
-        font-size: 14px;
-    }
-
-    .timeline-item small {
-        color: #555;
-        font-size: 12px;
-    }
-</style>
 @section('content')
 <div id="detailCutiPage" data-id="{{ $id }}">
     <div class="row">
@@ -335,9 +238,9 @@
     });
 });
 </script>
-  {{-- ajax tambah jenis cuti --}}
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
+{{-- ajax tambah jenis cuti --}}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
             const formCuti = document.getElementById("form-aksi");
 
             formCuti.addEventListener("submit", function(e) {
@@ -384,6 +287,5 @@
                     });
             });
         });
-    </script>
-
+</script>
 @endsection

@@ -14,6 +14,11 @@ use Illuminate\Support\Facades\DB;
 
 class CutiController extends Controller
 {
+    public function detail_jatah_cuti($id)
+    {
+        return view('detail_jatah_cuti', ['id' => $id]);
+    }
+
     public function detail_pengajuan_cuti($id)
     {
         // cukup kirim id ke view, JS pada view akan fetch data via AJAX
@@ -79,6 +84,20 @@ class CutiController extends Controller
             return response()->json(['message' => 'Jenis cuti tidak ditemukan'], 404);
         }
     }
+
+    public function getJatahCutiById($id)
+    {
+        $jatahCuti = JatahCutiModel::with('jenisCuti')
+            ->where('user_id', $id)
+            ->get();
+
+        if ($jatahCuti->isEmpty()) {
+            return response()->json(['message' => 'Data jatah cuti tidak ditemukan'], 404);
+        }
+
+        return response()->json(['data' => $jatahCuti]);
+    }
+
 
     public function getJenisCuti()
     {
@@ -159,28 +178,86 @@ class CutiController extends Controller
 
     // AJUKAN CUTI
 
+    // public function tambah_ajukan_cuti(Request $request)
+    // {
+    //     $request->validate([
+    //         'user_id' => 'required|exists:users,id',
+    //         'jenis_cuti_id' => 'required|exists:jenis_cutis,id',
+    //         'tanggal_awal' => 'required|date|before_or_equal:tanggal_akhir',
+    //         'tanggal_akhir' => 'required|date|after_or_equal:tanggal_awal',
+    //         'jumlah_hari' => 'required|integer',
+    //         'status' => 'required|integer',
+    //         'keterangan' => 'nullable|string|max:255',
+    //     ]);
+
+
+    //     $data = AjukanCutiModel::create($request->all());
+
+    //     // dd($data);
+
+    //     return response()->json([
+    //         'status' => 'success',
+    //         'message' => 'Pengajuan cuti berhasil ditambahkan!',
+    //         'data' => $data
+    //     ]);
+    // }
+
     public function tambah_ajukan_cuti(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
             'jenis_cuti_id' => 'required|exists:jenis_cutis,id',
             'tanggal_awal' => 'required|date|before_or_equal:tanggal_akhir',
             'tanggal_akhir' => 'required|date|after_or_equal:tanggal_awal',
-            'jumlah_hari' => 'required|integer',
+            'jumlah_hari' => 'required|integer|min:1',
             'status' => 'required|integer',
             'keterangan' => 'nullable|string|max:255',
         ]);
 
+        DB::beginTransaction();
 
-        $data = AjukanCutiModel::create($request->all());
+        try {
+            // Cek apakah user punya jatah cuti untuk jenis cuti tersebut
+            $jatahCuti = JatahCutiModel::where('user_id', $validated['user_id'])
+                ->where('jenis_cuti_id', $validated['jenis_cuti_id'])
+                ->first();
 
-        // dd($data);
+            if (!$jatahCuti) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'User ini tidak memiliki jatah cuti untuk jenis cuti yang dipilih.'
+                ], 404);
+            }
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Pengajuan cuti berhasil ditambahkan!',
-            'data' => $data
-        ]);
+            // Cek apakah sisa cuti cukup
+            if ($jatahCuti->sisa_cuti < $validated['jumlah_hari']) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Sisa cuti tidak mencukupi. Sisa cuti saat ini: ' . $jatahCuti->sisa_cuti
+                ], 400);
+            }
+
+            // Simpan pengajuan cuti
+            $data = AjukanCutiModel::create($validated);
+
+            // Update jatah cuti
+            $jatahCuti->increment('cuti_terpakai', $validated['jumlah_hari']);
+            $jatahCuti->decrement('sisa_cuti', $validated['jumlah_hari']);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Pengajuan cuti berhasil ditambahkan dan jatah cuti diperbarui!',
+                'data' => $data
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function edit_ajukan_cuti(Request $request, $id)

@@ -49,6 +49,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/delete_ajukan_cuti/{id}', [CutiController::class, 'delete_ajukan_cuti'])->name('delete_ajukan_cuti');
 
     //JATAH CUTI
+    Route::get('/getJatahCutiById/{id}', [CutiController::class, 'getJatahCutiById'])->name('getJatahCutiById');
     Route::get('/getUser', [CutiController::class, 'getUser'])->name('getUser');
     Route::get('/getJatahCuti', [CutiController::class, 'getJatahCuti'])->name('getJatahCuti');
     Route::get('/jatah_cuti', [CutiController::class, 'jatah_cuti'])->name('jatah_cuti');
