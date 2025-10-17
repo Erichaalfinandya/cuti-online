@@ -20,11 +20,6 @@
                         <th class="py-3 px-4 text-left rounded-tl-lg">No</th>
                         <th class="py-3 px-4 text-left">Nama Pegawai</th>
                         <th class="py-3 px-4 text-left">Detail</th>
-                        {{-- <th class="py-3 px-4 text-left">Jenis Cuti</th>
-                        <th class="py-3 px-4 text-left">Jumlah Total Cuti</th>
-                        <th class="py-3 px-4 text-left">Jumlah Cuti Terpakai</th>
-                        <th class="py-3 px-4 text-left rounded-tr-lg">Jumlah Sisa Cuti</th> --}}
-
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
@@ -48,7 +43,6 @@
                 ajax: {
                     url: "{{ route('getUser') }}",
                     dataSrc: function(json) {
-                        console.log('Response dari server:', json); // biar keliatan
                         return json.data || []; // ambil array di dalam 'data'
                     }
                 },
@@ -56,12 +50,6 @@
                         data: null,
                         render: (data, type, row, meta) => meta.row + 1
                     },
-                    // {
-                    //     data: "user_id",
-                    //     render: function(data, type, row) {
-                    //         return row.user ? row.user.nama : data;
-                    //     }
-                    // },
                     {
                         data: "nama"
                     },
@@ -74,16 +62,6 @@
                         `;
                         }
                     }
-                    //                     {
-                    //     data: "sisa_cuti"
-                    // },
-                    // {
-                    //     data: "cuti_terpakai"
-                    // },
-                    // {
-                    //     data: "sisa_cuti"
-                    // },
-
                 ],
             });
         });

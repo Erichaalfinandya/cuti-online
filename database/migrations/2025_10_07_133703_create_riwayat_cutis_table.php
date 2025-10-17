@@ -13,14 +13,11 @@ return new class extends Migration
     {
         Schema::create('riwayat_cutis', function (Blueprint $table) {
             $table->id();
-            $table->string('user');
             $table->date('tanggal');
-            $table->string('posisi');
-            $table->string('nama_pegawai');
-            $table->string('jenis_cuti');
-            $table->date('tanggal_awal');
-            $table->date('tanggal_akhir');
-            $table->string('status');
+            $table->string('user'); // kalau mau bisa diganti user_id -> foreignId ke users
+            $table->foreignId('ajukan_cuti_id')->constrained('ajukan_cutis')->onDelete('cascade');
+            $table->boolean('acc');
+            $table->string('keterangan')->nullable();
             $table->timestamps();
         });
     }

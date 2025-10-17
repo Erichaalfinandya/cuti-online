@@ -52,8 +52,7 @@
                     </li>
                     <!-- HOME -->
                     {{-- <li>
-                        <a href="#"
-                            class="flex items-center p-3 rounded-xl transition duration-200
+                        <a href="#" class="flex items-center p-3 rounded-xl transition duration-200
               hover:bg-[#842A3B]/10 hover:text-[#842A3B] text-slate-600">
                             <i class="fa-solid fa-house mr-3 text-[#842A3B]"></i> Home
                         </a>
@@ -73,43 +72,43 @@
                     </li>
                     <!-- JATAH CUTI -->
                     @role('kepegawaian')
-                    <li>
-                        <a href="{{ route('jatah-cuti') }}"
-                            class="flex items-center p-3 rounded-xl transition duration-200
-              {{ request()->routeIs('jatah-cuti')
+                        <li>
+                            <a href="{{ route('jatah_cuti') }}"
+                                class="flex items-center p-3 rounded-xl transition duration-200
+              {{ request()->routeIs('jatah_cuti')
                   ? 'bg-gradient-to-r from-[#842A3B] to-[#C95A6B] text-white shadow-md'
                   : 'hover:bg-[#842A3B]/10 hover:text-[#842A3B] text-slate-600' }}">
-                            <i
-                                class="fa-solid fa-calendar-days mr-3 {{ request()->routeIs('jatah-cuti') ? 'text-white' : 'text-[#842A3B]' }}"></i>
-                            Jatah Cuti
-                        </a>
-                    </li>
+                                <i
+                                    class="fa-solid fa-calendar-days mr-3 {{ request()->routeIs('jatah_cuti') ? 'text-white' : 'text-[#842A3B]' }}"></i>
+                                Jatah Cuti
+                            </a>
+                        </li>
                     @endrole
                     <!-- RIWAYAT CUTI -->
                     <li>
-                        <a href="{{ route('ajukan_cuti') }}"
+                        <a href="{{ route('list_ajukan_cuti') }}"
                             class="flex items-center p-3 rounded-xl transition duration-200
-              {{ request()->routeIs('ajukan_cuti')
+              {{ request()->routeIs('list_ajukan_cuti')
                   ? 'bg-gradient-to-r from-[#842A3B] to-[#C95A6B] text-white shadow-md'
                   : 'hover:bg-[#842A3B]/10 hover:text-[#842A3B] text-slate-600' }}">
                             <i
-                                class="fa-solid fa-clock-rotate-left mr-3 {{ request()->routeIs('ajukan_cuti') ? 'text-white' : 'text-[#842A3B]' }}"></i>
+                                class="fa-solid fa-clock-rotate-left mr-3 {{ request()->routeIs('list_ajukan_cuti') ? 'text-white' : 'text-[#842A3B]' }}"></i>
                             Riwayat Cuti
                         </a>
                     </li>
                     <!-- MASTER JENIS CUTI -->
                     @role('kepegawaian')
-                    <li>
-                        <a href="{{ route('master.jeniscuti') }}"
-                            class="flex items-center p-3 rounded-xl transition duration-200
-              {{ request()->routeIs('master.jeniscuti')
+                        <li>
+                            <a href="{{ route('master_jenis_cuti') }}"
+                                class="flex items-center p-3 rounded-xl transition duration-200
+              {{ request()->routeIs('master_jenis_cuti')
                   ? 'bg-gradient-to-r from-[#842A3B] to-[#C95A6B] text-white shadow-md'
                   : 'hover:bg-[#842A3B]/10 hover:text-[#842A3B] text-slate-600' }}">
-                            <i
-                                class="fa-solid fa-clipboard-list mr-3 {{ request()->routeIs('master.jeniscuti') ? 'text-white' : 'text-[#842A3B]' }}"></i>
-                            Master Jenis Cuti
-                        </a>
-                    </li>
+                                <i
+                                    class="fa-solid fa-clipboard-list mr-3 {{ request()->routeIs('master_jenis_cuti') ? 'text-white' : 'text-[#842A3B]' }}"></i>
+                                Master Jenis Cuti
+                            </a>
+                        </li>
                     @endrole
                 </ul>
             </div>

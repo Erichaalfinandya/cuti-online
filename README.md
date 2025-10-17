@@ -1,5 +1,5 @@
 1. db > table > users
-LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/users.csv' //disesuaikan
+LOAD DATA INFILE "C:/Users/ACER/Downloads/Data Pegawai.csv"
 INTO TABLE users
 CHARACTER SET utf8mb4
 FIELDS TERMINATED BY ','
@@ -10,6 +10,7 @@ IGNORE 1 ROWS
 SET password = '',
 created_at = NOW(),
 updated_at = NOW();
+
 
 2. php artisan tinker
 3. use App\Models\UserModel;
