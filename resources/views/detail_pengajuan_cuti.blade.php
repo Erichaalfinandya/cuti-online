@@ -62,16 +62,16 @@
         </div>
         <div class="col-6">
             {{-- AKSI KEPEGAWAIAN --}}
+            @hasanyrole('kepegawaian|sekretaris|panitera|panmud_1|panmud_2|panmud_3|kasubbag_1|kasubbag_2|kasubbag_3|ketua')
             <div class="row">
                 <div class="col-12">
                     <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-8 mt-6">
-                        <form method="POST" action="{{route('aksi_kepegawaian')}}" id="form-aksi">
+                        <form method="POST" action="{{ route('aksi_kepegawaian') }}" id="form-aksi">
                             @csrf
                             <input type="hidden" name="ajukan_cuti_id" value="{{ $id }}">
                             <h2>Persetujuan</h2>
-                            @role('kepegawaian')
+                            {{-- @role('kepegawaian') --}}
                             <div class="mb-4">
-                                <label class="block text-sm font-semibold text-slate-600 mb-1">Aksi Kepegawaian</label>
                                 <div class="flex items-center space-x-4">
                                     <label class="inline-flex items-center">
                                         <input type="radio" name="acc" value="1" class="form-radio text-blue-600"
@@ -91,99 +91,7 @@
                                         class="w-full border border-gray-300 rounded-lg px-4 py-2.5 shadow-sm focus:outline-none"></textarea>
                                 </div>
                             </div>
-                            @endrole
-                            @role('kasubbag')
-                            <div class="mb-4">
-                                <label class="block text-sm font-semibold text-slate-600 mb-1">Aksi Kasubbag</label>
-                                <div class="flex items-center space-x-4">
-                                    <label class="inline-flex items-center">
-                                        <input type="radio" name="aksi_kepegawaian" value="0" disabled
-                                            class="form-radio text-blue-600">
-                                        <span class="ml-2 text-gray-700">Acc</span>
-                                    </label>
-                                    <label class="inline-flex items-center">
-                                        <input type="radio" name="aksi_kepegawaian" value="1" disabled
-                                            class="form-radio text-blue-600">
-                                        <span class="ml-2 text-gray-700">Tidak</span>
-                                    </label>
-                                </div>
-                                <div class="mb-4">
-                                    <label for="keterangan"
-                                        class="block text-sm font-semibold text-slate-600 mb-1">Keterangan</label>
-                                    <textarea id="keterangan" name="keterangan"
-                                        class="w-full bg-gray-100 border border-gray-300 rounded-lg px-4 py-2.5 shadow-sm focus:outline-none"></textarea>
-                                </div>
-                            </div>
-                            @endrole
-                            @role('sekretaris')
-                            <div class="mb-4">
-                                <label class="block text-sm font-semibold text-slate-600 mb-1">Aksi Sekretaris</label>
-                                <div class="flex items-center space-x-4">
-                                    <label class="inline-flex items-center">
-                                        <input type="radio" name="aksi_kepegawaian" value="0" disabled
-                                            class="form-radio text-blue-600">
-                                        <span class="ml-2 text-gray-700">Acc</span>
-                                    </label>
-                                    <label class="inline-flex items-center">
-                                        <input type="radio" name="aksi_kepegawaian" value="1" disabled
-                                            class="form-radio text-blue-600">
-                                        <span class="ml-2 text-gray-700">Tidak</span>
-                                    </label>
-                                </div>
-                                <div class="mb-4">
-                                    <label for="keterangan"
-                                        class="block text-sm font-semibold text-slate-600 mb-1">Keterangan</label>
-                                    <textarea id="keterangan" name="keterangan"
-                                        class="w-full bg-gray-100 border border-gray-300 rounded-lg px-4 py-2.5 shadow-sm focus:outline-none"></textarea>
-                                </div>
-                            </div>
-                            @endrole
-                            @role('panmud')
-                            <div class="mb-4">
-                                <label class="block text-sm font-semibold text-slate-600 mb-1">Aksi Panmud</label>
-                                <div class="flex items-center space-x-4">
-                                    <label class="inline-flex items-center">
-                                        <input type="radio" name="aksi_kepegawaian" value="0" disabled
-                                            class="form-radio text-blue-600">
-                                        <span class="ml-2 text-gray-700">Acc</span>
-                                    </label>
-                                    <label class="inline-flex items-center">
-                                        <input type="radio" name="aksi_kepegawaian" value="1" disabled
-                                            class="form-radio text-blue-600">
-                                        <span class="ml-2 text-gray-700">Tidak</span>
-                                    </label>
-                                </div>
-                                <div class="mb-4">
-                                    <label for="keterangan"
-                                        class="block text-sm font-semibold text-slate-600 mb-1">Keterangan</label>
-                                    <textarea id="keterangan" name="keterangan"
-                                        class="w-full bg-gray-100 border border-gray-300 rounded-lg px-4 py-2.5 shadow-sm focus:outline-none"></textarea>
-                                </div>
-                            </div>
-                            @endrole
-                            @role('panitera')
-                            <div class="mb-4">
-                                <label class="block text-sm font-semibold text-slate-600 mb-1">Aksi Panitera</label>
-                                <div class="flex items-center space-x-4">
-                                    <label class="inline-flex items-center">
-                                        <input type="radio" name="aksi_kepegawaian" value="0" disabled
-                                            class="form-radio text-blue-600">
-                                        <span class="ml-2 text-gray-700">Acc</span>
-                                    </label>
-                                    <label class="inline-flex items-center">
-                                        <input type="radio" name="aksi_kepegawaian" value="1" disabled
-                                            class="form-radio text-blue-600">
-                                        <span class="ml-2 text-gray-700">Tidak</span>
-                                    </label>
-                                </div>
-                                <div class="mb-4">
-                                    <label for="keterangan"
-                                        class="block text-sm font-semibold text-slate-600 mb-1">Keterangan</label>
-                                    <textarea id="keterangan" name="keterangan"
-                                        class="w-full bg-gray-border border-gray-300 rounded-lg px-4 py-2.5 shadow-sm focus:outline-none"></textarea>
-                                </div>
-                            </div>
-                            @endrole
+                            {{-- @endrole --}}
                             @role('ketua')
                             <div class="mb-4">
                                 <label class="block text-sm font-semibold text-slate-600 mb-1">Aksi Ketua</label>
@@ -192,13 +100,23 @@
                                 </div>
                             </div>
                             @endrole
-
                             <div class="mb-4">
                                 <div class="flex items-center space-x-4">
                                     <button class="btn btn-success">Simpan</button>
                                 </div>
                             </div>
                         </form>
+                    </div>
+                </div>
+            </div>
+            @endhasanyrole
+            <div class="row">
+                <div class="col-12">
+                    <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-8 mt-6">
+                        <h2>Riwayat Persetujuan</h2>
+                        <div id="riwayat-container">
+                            <p class="text-gray-500">Belum ada riwayat persetujuan.</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -211,32 +129,61 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.datatables.net/2.0.3/js/dataTables.min.js"></script>
 <script>
-    $(document).ready(function () {
-    const id = $('#detailCutiPage').data('id');
+    $(document).ready(function() {
+            const id = $('#detailCutiPage').data('id');
 
-    $.ajax({
-        url: `/getPengajuanCutiById/${id}`,
-        type: 'GET',
-        success: function (response) {
-            if (response.data) {
-                const d = response.data;
-                // ambil relasi user dan jenis cuti
-                $('#id').val(d.id);
-                $('#user_id').val(d.user ? d.user.nama : '-');
-                $('#jenis_cuti_id').val(d.jenis_cuti ? d.jenis_cuti.nama_cuti : '-');
-                $('#tanggal_awal').val(d.tanggal_awal);
-                $('#tanggal_akhir').val(d.tanggal_akhir);
-                $('#jumlah_hari').val(d.jumlah_hari);
-                $('#keterangan').val(d.keterangan);
-            } else {
-                Swal.fire('Oops!', 'Data tidak ditemukan.', 'warning');
-            }
-        },
-        error: function () {
-            Swal.fire('Error', 'Gagal mengambil data pengajuan cuti.', 'error');
-        }
-    });
-});
+            $.ajax({
+                url: `/getPengajuanCutiById/${id}`,
+                type: 'GET',
+                success: function(response) {
+                    if (response.data) {
+                        const d = response.data;
+
+                        $('#id').val(d.id);
+                        $('#user_id').val(d.user ? d.user.nama : '-');
+                        $('#jenis_cuti_id').val(d.jenis_cuti ? d.jenis_cuti.nama_cuti : '-');
+                        $('#tanggal_awal').val(d.tanggal_awal);
+                        $('#tanggal_akhir').val(d.tanggal_akhir);
+                        $('#jumlah_hari').val(d.jumlah_hari);
+                        $('#keterangan').val(d.keterangan);
+
+                        // tampilkan riwayat cuti
+                        const container = $('#riwayat-container');
+                        container.empty();
+
+                        if (d.riwayat_cutis && d.riwayat_cutis.length > 0) {
+                            d.riwayat_cutis.forEach((r) => {
+                                const status = r.acc ? '✅ Disetujui' : '❌ Ditolak';
+                                const userNama = r.user ? r.user.nama : 'Tidak diketahui';
+                                const jabatan = r.user ? r.user.jabatan || '-' : '-';
+                                const golongan = r.user ? r.user.golongan || '-' : '-';
+                                const tanggal = new Date(r.created_at).toLocaleString('id-ID');
+
+                                const item = `
+                    <div class="border border-gray-200 rounded-lg p-3 mb-2 bg-gray-50">
+                        <p><strong>${userNama}</strong> <span class="text-sm text-gray-500">(${jabatan}, ${golongan})</span></p>
+                        <p><strong>Status:</strong> ${status}</p>
+                        <p><strong>Keterangan:</strong> ${r.keterangan || '-'}</p>
+                        <p class="text-xs text-gray-400">${tanggal}</p>
+                    </div>
+                `;
+                                container.append(item);
+                            });
+                        } else {
+                            container.html(
+                                '<p class="text-gray-500">Belum ada riwayat persetujuan.</p>');
+                        }
+
+                    } else {
+                        Swal.fire('Oops!', 'Data tidak ditemukan.', 'warning');
+                    }
+                },
+
+                error: function() {
+                    Swal.fire('Error', 'Gagal mengambil data pengajuan cuti.', 'error');
+                }
+            });
+        });
 </script>
 {{-- ajax tambah jenis cuti --}}
 <script>

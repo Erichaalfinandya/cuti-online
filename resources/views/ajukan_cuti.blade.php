@@ -12,6 +12,7 @@
             <tr class="bg-gradient-to-r from-[#842A3B]/10 to-[#C95A6B]/10 text-slate-700 font-semibold border-b">
                 <th class="py-3 px-4 text-left">No</th>
                 <th class="py-3 px-4 text-left">Nama Pengaju</th>
+                <th class="py-3 px-4 text-left">Role</th>
                 <th class="py-3 px-4 text-left">Jenis Cuti</th>
                 <th class="py-3 px-4 text-left">Tanggal Mulai</th>
                 <th class="py-3 px-4 text-left">Tanggal Selesai</th>
@@ -55,6 +56,9 @@
                         render: function(data, type, row) {
                             return row.user ? row.user.nama : data;
                         }
+                    },
+                                        {
+                        data: "user.golongan"
                     },
                     {
                         data: "jenis_cuti.nama_cuti"

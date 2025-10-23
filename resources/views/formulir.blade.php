@@ -17,7 +17,7 @@
         @csrf
         <input type="hidden" name="status" value="1">
         <!-- NAMA PEGAWAI -->
-        <div>
+        {{-- <div>
             <label for="user_id" class="block text-sm font-semibold text-slate-600 mb-1">Nama Pegawai</label>
             <select name="user_id" id="user_id"
                 class="w-full border border-gray-300 rounded-lg px-4 py-2.5 shadow-sm bg-white focus:ring-2 focus:ring-[#C95A6B]/40 focus:border-[#C95A6B] focus:outline-none transition"
@@ -27,7 +27,22 @@
                 <option value="{{ $item->id }}">{{ $item->nama }}</option>
                 @endforeach
             </select>
+        </div> --}}
+
+        <div>
+            <label for="user_nama" class="block text-sm font-semibold text-slate-600 mb-1">
+                Nama Pegawai
+            </label>
+
+            {{-- Tampilkan nama pegawai (readonly) --}}
+            <input type="text" id="user_nama" value="{{ auth()->user()->nama }}"
+                class="w-full border border-gray-300 rounded-lg px-4 py-2.5 shadow-sm bg-gray-100 cursor-not-allowed"
+                readonly>
+
+            {{-- Hidden input untuk kirim id pegawai --}}
+            <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
         </div>
+
 
         <!-- JENIS CUTI -->
         <div class="mb-4">
@@ -189,9 +204,9 @@
 });
 </script>
 
-    {{-- ajax tambah jenis cuti --}}
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
+{{-- ajax tambah jenis cuti --}}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
             const formCuti = document.getElementById("form-tambah-cuti");
 
             formCuti.addEventListener("submit", function(e) {
@@ -238,7 +253,7 @@
                     });
             });
         });
-    </script>
+</script>
 
 @endpush
 @endsection

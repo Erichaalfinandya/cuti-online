@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('riwayat_cutis', function (Blueprint $table) {
             $table->id();
             $table->date('tanggal');
-            $table->string('user'); // kalau mau bisa diganti user_id -> foreignId ke users
+            // $table->string('user'); // kalau mau bisa diganti user_id -> foreignId ke users
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('ajukan_cuti_id')->constrained('ajukan_cutis')->onDelete('cascade');
             $table->boolean('acc');
             $table->string('keterangan')->nullable();

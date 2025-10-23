@@ -71,19 +71,19 @@
                         </a>
                     </li>
                     <!-- JATAH CUTI -->
-                    @role('kepegawaian')
-                        <li>
-                            <a href="{{ route('jatah_cuti') }}"
-                                class="flex items-center p-3 rounded-xl transition duration-200
+                    {{-- @role('kepegawaian') --}}
+                    <li>
+                        <a href="{{ route('jatah_cuti') }}"
+                            class="flex items-center p-3 rounded-xl transition duration-200
               {{ request()->routeIs('jatah_cuti')
                   ? 'bg-gradient-to-r from-[#842A3B] to-[#C95A6B] text-white shadow-md'
                   : 'hover:bg-[#842A3B]/10 hover:text-[#842A3B] text-slate-600' }}">
-                                <i
-                                    class="fa-solid fa-calendar-days mr-3 {{ request()->routeIs('jatah_cuti') ? 'text-white' : 'text-[#842A3B]' }}"></i>
-                                Jatah Cuti
-                            </a>
-                        </li>
-                    @endrole
+                            <i
+                                class="fa-solid fa-calendar-days mr-3 {{ request()->routeIs('jatah_cuti') ? 'text-white' : 'text-[#842A3B]' }}"></i>
+                            Jatah Cuti
+                        </a>
+                    </li>
+                    {{-- @endrole --}}
                     <!-- RIWAYAT CUTI -->
                     <li>
                         <a href="{{ route('list_ajukan_cuti') }}"
@@ -115,8 +115,11 @@
 
             <!-- Bawah -->
             <div class="mt-10">
-                <p class="text-xs uppercase font-bold text-slate-500 mb-3 tracking-wider">Account Pages</p>
-
+                <p class="text-xs uppercase font-bold text-slate-500 mb-3 tracking-wider">
+                    {{ Auth::user()->nama }} <br>
+                    {{ Auth::user()->jabatan }} <br>
+                    {{ Auth::user()->golongan }}
+                </p>
                 <button id="btnLogout" type="button"
                     class="flex items-center gap-2 px-4 py-2 rounded-lg text-white font-semibold
                         bg-gradient-to-r from-[#842A3B] to-[#C95A6B]

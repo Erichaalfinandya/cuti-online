@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
+use Log;
 use App\Models\UserModel;
+use App\Models\RiwayatCuti;
 use Illuminate\Http\Request;
+use App\Models\JatahCutiModel;
 use App\Models\JenisCutiModel;
 use App\Models\AjukanCutiModel;
-use App\Models\JatahCutiModel;
-use App\Models\RiwayatCuti;
 use App\Models\RiwayatCutiModel;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 class CutiController extends Controller
 {
@@ -53,26 +54,63 @@ class CutiController extends Controller
         return response()->json(['data' => $cutis]);
     }
 
+
+    // public function getUser()
+    // {
+    //     $data = UserModel::all();
+    //     return response()->json(['data' => $data]);
+    // }
     public function getUser()
     {
-        $data = UserModel::all();
+        $user = auth()->user();
+
+        // kalau dia role kepegawaian, ambil semua data
+        if ($user->hasRole('kepegawaian')) {
+            $data = UserModel::select('id', 'nama', 'nip')->get();
+        } else {
+            // selain itu, cuma data dia sendiri
+            $data = UserModel::where('id', $user->id)
+                ->select('id', 'nama', 'nip')
+                ->get();
+        }
+
         return response()->json(['data' => $data]);
     }
 
+
+    // public function getPengajuanCutiById($id)
+    // {
+    //     // $data = AjukanCutiModel::find($id);
+    //     $data = AjukanCutiModel::with([
+    //         'user:id,nama',
+    //         'jenisCuti:id,nama_cuti'
+    //     ])->find($id);
+
+    //     if ($data) {
+    //         return response()->json(['data' => $data]);
+    //     } else {
+    //         return response()->json(['message' => 'Jenis cuti tidak ditemukan'], 404);
+    //     }
+    // }
+
     public function getPengajuanCutiById($id)
     {
-        // $data = AjukanCutiModel::find($id);
         $data = AjukanCutiModel::with([
             'user:id,nama',
-            'jenisCuti:id,nama_cuti'
+            'jenisCuti:id,nama_cuti',
+            'riwayatCutis' => function ($q) {
+                $q->with(['user:id,nama,jabatan,golongan'])
+                    ->select('id', 'ajukan_cuti_id', 'user_id', 'acc', 'keterangan', 'created_at');
+            }
         ])->find($id);
 
         if ($data) {
             return response()->json(['data' => $data]);
         } else {
-            return response()->json(['message' => 'Jenis cuti tidak ditemukan'], 404);
+            return response()->json(['message' => 'Data tidak ditemukan'], 404);
         }
     }
+
 
     // JENIS CUTI
     public function getJenisCutiById($id)
@@ -296,6 +334,37 @@ class CutiController extends Controller
 
 
     //AKSI KEPEGAWAIAN
+    // public function aksi_kepegawaian(Request $request)
+    // {
+    //     $validated = $request->validate([
+    //         'ajukan_cuti_id' => 'required|exists:ajukan_cutis,id',
+    //         'acc' => 'required|boolean',
+    //         'keterangan' => 'nullable|string|max:255',
+    //     ]);
+
+    //     $data = [
+    //         'tanggal' => now(), // waktu saat ini
+    //         // 'user_id' => auth()->user()->nama, // user login
+    //         // 'user_id' => auth()->id(),
+    //         'user_id' => auth()->user()->id, // bukan NIP
+    //         'ajukan_cuti_id' => $validated['ajukan_cuti_id'],
+    //         'acc' => $validated['acc'],
+    //         'keterangan' => $validated['keterangan'] ?? null,
+    //     ];
+
+    //     // Simpan ke tabel riwayat cuti
+    //     $riwayat = RiwayatCutiModel::create($data);
+
+    //     // Update status ajukan cuti menjadi 2
+    //     AjukanCutiModel::where('id', $validated['ajukan_cuti_id'])
+    //         ->update(['status' => 2]);
+
+    //     return response()->json([
+    //         'status' => 'success',
+    //         'message' => 'Aksi kepegawaian berhasil disimpan dan status cuti diperbarui!',
+    //         'data' => $riwayat
+    //     ]);
+    // }
     public function aksi_kepegawaian(Request $request)
     {
         $validated = $request->validate([
@@ -304,9 +373,11 @@ class CutiController extends Controller
             'keterangan' => 'nullable|string|max:255',
         ]);
 
+        $user = auth()->user();
+
         $data = [
-            'tanggal' => now(), // waktu saat ini
-            'user' => auth()->user()->nama, // user login
+            'tanggal' => now(),
+            'user_id' => $user->id,
             'ajukan_cuti_id' => $validated['ajukan_cuti_id'],
             'acc' => $validated['acc'],
             'keterangan' => $validated['keterangan'] ?? null,
@@ -315,9 +386,18 @@ class CutiController extends Controller
         // Simpan ke tabel riwayat cuti
         $riwayat = RiwayatCutiModel::create($data);
 
-        // Update status ajukan cuti menjadi 2
+        // Tentukan status baru berdasarkan golongan/jabatan user login
+        $status = match (strtolower(trim($user->golongan ?? ''))) {
+            'kepegawaian' => 2,
+            'kasubbag_1', 'kasubbag_2', 'kasubbag_3', 'panmud_1', 'panmud_2', 'panmud_3' => 3,
+            'panitera', 'sekretaris' => 4,
+            'ketua' => 5,
+            default => 1,
+        };
+
+        // Update status ajukan cuti
         AjukanCutiModel::where('id', $validated['ajukan_cuti_id'])
-            ->update(['status' => 2]);
+            ->update(['status' => $status]);
 
         return response()->json([
             'status' => 'success',

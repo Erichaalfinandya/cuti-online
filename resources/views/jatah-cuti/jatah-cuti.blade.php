@@ -3,52 +3,52 @@
 @section('title', 'Jatah Cuti')
 
 @section('content')
-<div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-8 mt-6">
+    <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-8 mt-6">
 
-    <!-- Judul -->
-    <div class="flex justify-between items-center mb-6 border-b pb-3">
-        <h2 class="text-2xl font-semibold text-[#842A3B] flex items-center">
-            <i class="fa-solid fa-calendar-days mr-3"></i> Jatah Cuti Pegawai
-        </h2>
-    </div>
-
-    <!-- TABEL DATA -->
-    <div class="overflow-x-auto">
-        <table class="min-w-full text-sm text-gray-700 border border-gray-100 rounded-lg" id="tabelCuti">
-            <thead class="bg-gradient-to-r from-[#842A3B] to-[#C95A6B] text-white">
-                <tr>
-                    <th class="py-3 px-4 text-left rounded-tl-lg">No</th>
-                    <th class="py-3 px-4 text-left">Nama Pegawai</th>
-                    <th class="py-3 px-4 text-left">NIP</th>
-                    <th class="py-3 px-4 text-left">Detail</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100">
-
-            </tbody>
-        </table>
-    </div>
-</div>
-<!-- Modal -->
-<div id="detailModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white p-6 rounded-lg w-1/2 shadow-lg">
-        <h2 class="text-xl font-semibold mb-4">Detail Pengajuan Cuti</h2>
-        <div id="detailContent">
-            <!-- data detail akan dimasukkan lewat JS -->
+        <!-- Judul -->
+        <div class="flex justify-between items-center mb-6 border-b pb-3">
+            <h2 class="text-2xl font-semibold text-[#842A3B] flex items-center">
+                <i class="fa-solid fa-calendar-days mr-3"></i> Jatah Cuti Pegawai
+            </h2>
         </div>
-        <button id="closeModal" class="mt-4 bg-red-500 text-white px-4 py-2 rounded">Tutup</button>
+
+        <!-- TABEL DATA -->
+        <div class="overflow-x-auto">
+            <table class="min-w-full text-sm text-gray-700 border border-gray-100 rounded-lg" id="tabelCuti">
+                <thead class="bg-gradient-to-r from-[#842A3B] to-[#C95A6B] text-white">
+                    <tr>
+                        <th class="py-3 px-4 text-left rounded-tl-lg">No</th>
+                        <th class="py-3 px-4 text-left">Nama Pegawai</th>
+                        <th class="py-3 px-4 text-left">NIP</th>
+                        <th class="py-3 px-4 text-left">Detail</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
+    <!-- Modal -->
+    <div id="detailModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-lg w-1/2 shadow-lg">
+            <h2 class="text-xl font-semibold mb-4">Detail Pengajuan Cuti</h2>
+            <div id="detailContent">
+                <!-- data detail akan dimasukkan lewat JS -->
+            </div>
+            <button id="closeModal" class="mt-4 bg-red-500 text-white px-4 py-2 rounded">Tutup</button>
+        </div>
+    </div>
 
 
-<!-- Scripts -->
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://cdn.datatables.net/2.0.3/js/dataTables.min.js"></script>
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.datatables.net/2.0.3/js/dataTables.min.js"></script>
 
-{{-- tampilan data table dan hapus --}}
-<script>
-    var tabelCuti; // deklarasikan di luar agar jadi global
+    {{-- tampilan data table dan hapus --}}
+    <script>
+        var tabelCuti; // deklarasikan di luar agar jadi global
 
         $(document).ready(function() {
             tabelCuti = $('#tabelCuti').DataTable({
@@ -80,21 +80,21 @@
                 ],
             });
         });
-</script>
-<script>
-   $(document).on('click', '.detail-btn', function () {
-    const id = $(this).data('id'); // ambil id user dari tombol
-console.log(id);
-    $.ajax({
-        url: `/getJatahCutiById/${id}`,
-        type: 'GET',
-        success: function (res) {
-            let html = `
+    </script>
+    <script>
+        $(document).on('click', '.detail-btn', function() {
+            const id = $(this).data('id'); // ambil id user dari tombol
+            console.log(id);
+            $.ajax({
+                url: `/getJatahCutiById/${id}`,
+                type: 'GET',
+                success: function(res) {
+                    let html = `
                 <h3 class="text-lg font-semibold mb-2">Daftar Jatah Cuti</h3>
             `;
 
-            res.data.forEach((item, index) => {
-                html += `
+                    res.data.forEach((item, index) => {
+                        html += `
                     <div class="border rounded-md p-3 mb-2 bg-gray-50">
                         <p><strong>${index + 1}. ${item.jenis_cuti.nama_cuti}</strong></p>
                         <p>Jumlah Hari: ${item.jenis_cuti.jumlah_hari}</p>
@@ -103,17 +103,15 @@ console.log(id);
                         <p>Keterangan: ${item.jenis_cuti.keterangan ?? '-'}</p>
                     </div>
                 `;
+                    });
+
+                    $('#detailContent').html(html);
+                    $('#detailModal').removeClass('hidden');
+                },
+                error: function() {
+                    alert('Gagal mengambil data jatah cuti.');
+                }
             });
-
-            $('#detailContent').html(html);
-            $('#detailModal').removeClass('hidden');
-        },
-        error: function () {
-            alert('Gagal mengambil data jatah cuti.');
-        }
-    });
-});
-
-
-</script>
+        });
+    </script>
 @endsection
