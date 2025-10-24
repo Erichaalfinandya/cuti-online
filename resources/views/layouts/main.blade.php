@@ -100,7 +100,7 @@
                     @role('kepegawaian')
                         <li>
                             <a href="{{ route('master_jenis_cuti') }}"
-                                class="flex items-center p-3 rounded-xl transition duration-200
+                                class="flex items-center p-3 rounded-xl transition duration-200 
               {{ request()->routeIs('master_jenis_cuti')
                   ? 'bg-gradient-to-r from-[#842A3B] to-[#C95A6B] text-white shadow-md'
                   : 'hover:bg-[#842A3B]/10 hover:text-[#842A3B] text-slate-600' }}">
@@ -110,6 +110,17 @@
                             </a>
                         </li>
                     @endrole
+                    <!-- TRACKING CUTI -->
+                    <li>
+                        <a href="{{ route('tracking') }}"
+                            class="flex items-center p-3 rounded-xl transition duration-200
+                            {{ request()->routeIs('tracking')
+                                ? 'bg-gradient-to-r from-[#842A3B] to-[#C95A6B] text-white shadow-md'
+                                : 'hover:bg-[#842A3B]/10 hover:text-[#842A3B] text-slate-600' }}">
+                            <i class="fa-solid fa-route mr-3 {{ request()->routeIs('tracking') ? 'text-white' : 'text-[#842A3B]' }}"></i>
+                            Tracking Cuti
+                        </a>
+                    </li>
                 </ul>
             </div>
 

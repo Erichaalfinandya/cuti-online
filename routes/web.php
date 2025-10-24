@@ -59,4 +59,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/detail_pengajuan_cuti/{id}', [CutiController::class, 'detail_pengajuan_cuti'])->name('detail_pengajuan_cuti');
     Route::get('/getPengajuanCutiById/{id}', [CutiController::class, 'getPengajuanCutiById'])->name('getPengajuanCutiById');
     route::post('/aksi_kepegawaian', [CutiController::class, 'aksi_kepegawaian'])->name('aksi_kepegawaian');
+
+    //TRACKING CUTI
+    Route::get('/tracking', function () {
+        return view('tracking');
+    })->name('tracking');
+    
 });

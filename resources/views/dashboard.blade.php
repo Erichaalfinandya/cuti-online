@@ -10,20 +10,42 @@
     }">
 
     {{-- Breadcrumb + Navbar --}}
-    <div class="flex justify-between items-center mb-6">
+<div class="flex justify-between items-center mb-6">
+    <div>
+        <h2 class="text-3xl font-bold text-[#842A3B] tracking-tight">Dashboard</h2>
+        <p class="text-gray-500 text-sm mt-1">Selamat datang di sistem informasi cuti pegawai</p>
+    </div>
+</div>
+
+{{-- SALAM ROLE-BASED --}}
+<div class="bg-gradient-to-r from-[#842A3B]/10 to-[#C95A6B]/10 border border-[#C95A6B]/30 rounded-2xl shadow-sm p-6 mb-6">
+    <div class="flex items-center justify-between">
         <div>
-            <h2 class="text-2xl font-bold text-[#842A3B]">Dashboard</h2>
+            @role('kasubbag')
+                <h3 class="text-xl font-semibold text-[#842A3B]">Halo, Kasubbag 👋</h3>
+                <p class="text-gray-600 mt-1">Semoga harimu menyenangkan dan produktif!</p>
+            @endrole
+
+            @role('hakim')
+                <h3 class="text-xl font-semibold text-[#842A3B]">Halo, Hakim 👋</h3>
+                <p class="text-gray-600 mt-1">Selamat datang kembali, siap melanjutkan pekerjaan?</p>
+            @endrole
+
+            @role('kepegawaian')
+                <h3 class="text-xl font-semibold text-[#842A3B]">Halo, Kepegawaian 👋</h3>
+                <p class="text-gray-600 mt-1">Semoga hari ini lancar dan penuh semangat!</p>
+            @endrole
+        </div>
+
+        {{-- OPTIONAL: ILUSTRASI / ICON --}}
+        <div class="hidden md:block">
+            <img src="https://cdn-icons-png.flaticon.com/512/4221/4221419.png" 
+                 alt="Welcome" 
+                 class="w-20 h-20 opacity-80">
         </div>
     </div>
-    @role('kasubbag')
-    <p>halo kasubbag</p>
-    @endrole
-    @role('hakim')
-    <p>halo hakim</p>
-    @endrole
-    @role('kepegawaian')
-    <p>halo kepegawaian</p>
-    @endrole
+</div>
+
     {{-- Kartu Statistik --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <div class="bg-white shadow-md rounded-xl p-4 flex justify-between items-center border border-[#842A3B]/20">

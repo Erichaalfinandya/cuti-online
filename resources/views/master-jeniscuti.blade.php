@@ -3,10 +3,14 @@
 @section('title', 'Master Jenis Cuti')
 
 @section('content')
-    <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold text-slate-700">Master Jenis Cuti</h2>
+<div class="relative max-w-6xl mx-auto bg-white rounded-2xl shadow-lg p-8 mt-6 border border-gray-100">
 
-        <!-- Tombol Tambah Data -->
+    <!-- HEADER + BUTTON DALAM SATU BARIS -->
+    <div class="flex justify-between items-center mb-8 border-b pb-4">
+        <h2 class="text-2xl font-semibold text-[#842A3B] flex items-center">
+            Master Jenis Cuti
+        </h2>
+
         <button type="button"
             class="bg-gradient-to-r from-[#842A3B] to-[#C95A6B] text-white px-5 py-2 rounded-lg text-sm font-semibold shadow-md hover:scale-105 hover:opacity-90 transition"
             data-bs-toggle="modal" data-bs-target="#tambahCutiModal">
@@ -15,10 +19,10 @@
     </div>
 
     <!-- TABEL DATA -->
-    <div class="bg-white rounded-2xl shadow-md overflow-hidden">
-        <table class="min-w-full text-sm text-gray-700 border border-gray-200" id="tabelCuti">
+    <div class="overflow-x-auto">
+        <table class="min-w-full text-sm text-gray-700 border border-gray-100 rounded-lg" id="tabelCuti">
             <thead>
-                <tr class="bg-gradient-to-r from-[#842A3B]/10 to-[#C95A6B]/10 text-slate-700 font-semibold border-b">
+                <tr class="bg-gradient-to-r from-[#842A3B] to-[#C95A6B] text-white">
                     <th class="py-3 px-4 text-left">No</th>
                     <th class="py-3 px-4 text-left">Nama Jenis Cuti</th>
                     <th class="py-3 px-4 text-left">Jumlah Hari</th>
@@ -26,14 +30,14 @@
                     <th class="py-3 px-4 text-center">Aksi</th>
                 </tr>
             </thead>
-            <tbody>
-
+            <tbody class="divide-y divide-gray-100">
+                
             </tbody>
         </table>
     </div>
 
-    <!-- MODAL TAMBAH DATA -->
-    <div class="modal fade" id="tambahCutiModal" tabindex="-1" aria-labelledby="tambahCutiLabel" aria-hidden="true">
+     <!-- MODAL TAMBAH DATA -->
+     <div class="modal fade" id="tambahCutiModal" tabindex="-1" aria-labelledby="tambahCutiLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content rounded-2xl shadow-2xl border-0 overflow-hidden">
                 <div class="modal-header bg-gradient-to-r from-[#842A3B] to-[#C95A6B] text-white">
@@ -132,44 +136,46 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.datatables.net/2.0.3/js/dataTables.min.js"></script>
 
-
-    {{-- tampilan data table dan hapus --}}
+       {{-- tampilan data table dan hapus --}}
     <script>
-        var tabelCuti; // deklarasikan di luar agar jadi global
+         var tabelCuti; // deklarasikan di luar agar jadi global
 
         $(document).ready(function() {
             tabelCuti = $('#tabelCuti').DataTable({
                 ajax: {
                     url: "{{ route('getJenisCuti') }}",
                     dataSrc: function(json) {
-                        console.log('Response dari server:', json); // biar keliatan
-                        return json.data || []; // ambil array di dalam 'data'
+                        console.log('Response dari server:', json);
+                        return json.data || [];
                     }
                 },
-                columns: [{
-                        data: null,
-                        render: (data, type, row, meta) => meta.row + 1
-                    },
-                    {
-                        data: "nama_cuti"
-                    },
-                    {
-                        data: "jumlah_hari"
-                    },
-                    {
-                        data: "keterangan"
-                    },
+                columns: [
+                    { data: null, render: (data, type, row, meta) => meta.row + 1 },
+                    { data: "nama_cuti" },
+                    { data: "jumlah_hari" },
+                    { data: "keterangan" },
                     {
                         data: "id",
                         className: "text-center",
                         render: function(data) {
                             return `
-                            <button class="bg-blue-500 text-white px-2 py-1 rounded edit-btn" data-id="${data}">Edit</button>
-                            <button class="bg-red-500 text-white px-2 py-1 rounded delete-btn" data-id="${data}">Hapus</button>
-                        `;
+                                <button class="bg-blue-500 text-white px-2 py-1 rounded edit-btn" data-id="${data}">Edit</button>
+                                <button class="bg-red-500 text-white px-2 py-1 rounded delete-btn" data-id="${data}">Hapus</button>
+                            `;
                         }
                     }
                 ],
+
+                responsive: true,
+                language: {
+                    search: "Search:",
+                    lengthMenu: "Show _MENU_ entries",
+                    info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                    infoEmpty: "Showing 0 to 0 of 0 entries",
+                    infoFiltered: "(filtered from _MAX_ total entries)",
+                    zeroRecords: "No matching records found",
+                    paginate: { next: "›", previous: "‹" }
+                }
             });
         });
 
@@ -191,9 +197,7 @@
                     $.ajax({
                         url: `/delete_jenis_cuti/${id}`,
                         type: 'POST',
-                        data: {
-                            _token: '{{ csrf_token() }}'
-                        },
+                        data: { _token: '{{ csrf_token() }}' },
                         success: function(res) {
                             Swal.fire({
                                 icon: 'success',
@@ -202,14 +206,13 @@
                                 timer: 1500,
                                 showConfirmButton: false
                             });
-                            tabelCuti.ajax.reload(null, false); // sekarang jalan
+                            tabelCuti.ajax.reload(null, false);
                         },
                         error: function(xhr) {
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Gagal!',
-                                text: xhr.responseJSON?.message ||
-                                    'Terjadi kesalahan saat menghapus data.'
+                                text: xhr.responseJSON?.message || 'Terjadi kesalahan saat menghapus data.'
                             });
                         }
                     });
@@ -218,8 +221,8 @@
         });
     </script>
 
-    {{-- ajax tambah jenis cuti --}}
-    <script>
+     {{-- ajax tambah jenis cuti --}}
+     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const formCuti = document.getElementById("form-tambah-jenis-cuti");
 
@@ -280,8 +283,8 @@
         });
     </script>
 
-    {{-- ajax edit jenis cuti --}}
-    <script>
+     {{-- ajax edit jenis cuti --}}
+     <script>
         // Event edit
         $(document).on('click', '.edit-btn', function() {
             // alert('Klik terdeteksi!');
@@ -369,4 +372,35 @@
         });
     </script>
 
+    {{-- CSS tambahan agar tampilannya cantik seperti contoh --}}
+    <style>
+        div.dataTables_wrapper {
+            margin-top: 1rem;
+        }
+
+        div.dataTables_filter input {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 5px 8px;
+        }
+
+        div.dataTables_length select {
+            border-radius: 8px;
+            padding: 4px 6px;
+        }
+
+        table.dataTable thead th {
+            background: linear-gradient(to right, #842A3B, #C95A6B);
+            color: white !important;
+            border: none;
+        }
+
+        table.dataTable tbody tr {
+            border-bottom: 1px solid #eee;
+        }
+
+        table.dataTable.no-footer {
+            border-bottom: none !important;
+        }
+    </style>
 @endsection
