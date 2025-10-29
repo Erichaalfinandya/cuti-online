@@ -23,8 +23,7 @@ class UserModel extends Authenticatable
         return 'nip';
     }
     public function cuti()
-{
-    return $this->hasMany(\App\Models\AjukanCutiModel::class, 'user_id');
-}
-
+    {
+        return $this->hasMany(\App\Models\AjukanCutiModel::class, 'user_id');
+    }
 }

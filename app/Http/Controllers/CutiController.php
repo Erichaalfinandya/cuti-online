@@ -59,7 +59,9 @@ class CutiController extends Controller
         $user = auth()->user();
         $query = AjukanCutiModel::with(['user', 'jenisCuti']);
 
-        switch ($user->golongan) {
+        $golongan = trim($user->golongan); // bersihkan login user
+
+        switch ($golongan) {
             case 'kepegawaian':
             case 'ketua':
             case 'hakim':
@@ -67,30 +69,58 @@ class CutiController extends Controller
                 break;
 
             case 'panmud_1':
-                $query->whereHas('user', fn($q) => $q->where('golongan', 'staf_panitera_1'));
+                $query->whereHas(
+                    'user',
+                    fn($q) =>
+                    $q->whereRaw("TRIM(REPLACE(REPLACE(golongan, '\r', ''), '\n', '')) = ?", ['staf_panitera_1'])
+                );
                 break;
+
             case 'panmud_2':
-                $query->whereHas('user', fn($q) => $q->where('golongan', 'staf_panitera_2'));
+                $query->whereHas(
+                    'user',
+                    fn($q) =>
+                    $q->whereRaw("TRIM(REPLACE(REPLACE(golongan, '\r', ''), '\n', '')) = ?", ['staf_panitera_2'])
+                );
                 break;
+
             case 'panmud_3':
-                $query->whereHas('user', fn($q) => $q->where('golongan', 'staf_panitera_3'));
+                $query->whereHas(
+                    'user',
+                    fn($q) =>
+                    $q->whereRaw("TRIM(REPLACE(REPLACE(golongan, '\r', ''), '\n', '')) = ?", ['staf_panitera_3'])
+                );
                 break;
 
             case 'kasubbag_1':
-                $query->whereHas('user', fn($q) => $q->where('golongan', 'staf_sekretaris_1'));
+                $query->whereHas(
+                    'user',
+                    fn($q) =>
+                    $q->whereRaw("TRIM(REPLACE(REPLACE(golongan, '\r', ''), '\n', '')) = ?", ['staf_sekretaris_1'])
+                );
                 break;
+
             case 'kasubbag_2':
-                $query->whereHas('user', fn($q) => $q->where('golongan', 'staf_sekretaris_2'));
+                $query->whereHas(
+                    'user',
+                    fn($q) =>
+                    $q->whereRaw("TRIM(REPLACE(REPLACE(golongan, '\r', ''), '\n', '')) = ?", ['staf_sekretaris_2'])
+                );
                 break;
+
             case 'kasubbag_3':
-                $query->whereHas('user', fn($q) => $q->where('golongan', 'staf_sekretaris_3'));
+                $query->whereHas(
+                    'user',
+                    fn($q) =>
+                    $q->whereRaw("TRIM(REPLACE(REPLACE(golongan, '\r', ''), '\n', '')) = ?", ['staf_sekretaris_3'])
+                );
                 break;
 
             case 'panitera':
                 $query->whereHas(
                     'user',
                     fn($q) =>
-                    $q->whereIn('golongan', [
+                    $q->whereIn(DB::raw("TRIM(REPLACE(REPLACE(golongan, '\r', ''), '\n', ''))"), [
                         'panmud',
                         'panmud_1',
                         'panmud_2',
@@ -106,7 +136,7 @@ class CutiController extends Controller
                 $query->whereHas(
                     'user',
                     fn($q) =>
-                    $q->whereIn('golongan', [
+                    $q->whereIn(DB::raw("TRIM(REPLACE(REPLACE(golongan, '\r', ''), '\n', ''))"), [
                         'kasubbag_1',
                         'kasubbag_2',
                         'kasubbag_3',
@@ -127,8 +157,6 @@ class CutiController extends Controller
 
         return response()->json(['data' => $data]);
     }
-
-
 
     // public function getUser()
     // {
@@ -203,7 +231,7 @@ class CutiController extends Controller
         $jatahCuti = JatahCutiModel::with('jenisCuti')
             ->where('user_id', $id)
             ->get();
-
+            
         if ($jatahCuti->isEmpty()) {
             return response()->json(['message' => 'Data jatah cuti tidak ditemukan'], 404);
         }

@@ -10,44 +10,61 @@
     }">
 
     {{-- Breadcrumb + Navbar --}}
-<div class="flex justify-between items-center mb-6">
-    <div>
-        <h2 class="text-3xl font-bold text-[#842A3B] tracking-tight">Dashboard</h2>
-        <p class="text-gray-500 text-sm mt-1">Selamat datang di sistem informasi cuti pegawai</p>
-    </div>
-</div>
-
-{{-- SALAM ROLE-BASED --}}
-<div class="bg-gradient-to-r from-[#842A3B]/10 to-[#C95A6B]/10 border border-[#C95A6B]/30 rounded-2xl shadow-sm p-6 mb-6">
-    <div class="flex items-center justify-between">
+    <div class="flex justify-between items-center mb-6">
         <div>
-            @role('kasubbag')
-                <h3 class="text-xl font-semibold text-[#842A3B]">Halo, Kasubbag 👋</h3>
-                <p class="text-gray-600 mt-1">Semoga harimu menyenangkan dan produktif!</p>
-            @endrole
-
-            @role('hakim')
-                <h3 class="text-xl font-semibold text-[#842A3B]">Halo, Hakim 👋</h3>
-                <p class="text-gray-600 mt-1">Selamat datang kembali, siap melanjutkan pekerjaan?</p>
-            @endrole
-
-            @role('kepegawaian')
-                <h3 class="text-xl font-semibold text-[#842A3B]">Halo, Kepegawaian 👋</h3>
-                <p class="text-gray-600 mt-1">Semoga hari ini lancar dan penuh semangat!</p>
-            @endrole
-        </div>
-
-        {{-- OPTIONAL: ILUSTRASI / ICON --}}
-        <div class="hidden md:block">
-            <img src="https://cdn-icons-png.flaticon.com/512/4221/4221419.png" 
-                 alt="Welcome" 
-                 class="w-20 h-20 opacity-80">
+            <h2 class="text-3xl font-bold text-[#842A3B] tracking-tight">Dashboard</h2>
+            <p class="text-gray-500 text-sm mt-1">Selamat datang di sistem informasi cuti pegawai</p>
         </div>
     </div>
-</div>
+    @php
+    $roles = [
+    'ketua',
+    'hakim',
+    'panitera',
+    'sekretaris',
+    'panmud',
+    'panmud_1',
+    'panmud_2',
+    'panmud_3',
+    'kasubbag',
+    'kasubbag_1',
+    'kasubbag_2',
+    'kasubbag_3',
+    'staf_panitera_1',
+    'staf_panitera_2',
+    'staf_panitera_3',
+    'staf_sekretaris_1',
+    'staf_sekretaris_2',
+    'staf_sekretaris_3',
+    'kepegawaian',
+    ];
+
+    $userRole = trim(Auth::user()->golongan); // atau pakai role jika kamu pakai spatie/permission
+    @endphp
+
+    {{-- SALAM ROLE-BASED --}}
+    <div
+        class="bg-gradient-to-r from-[#842A3B]/10 to-[#C95A6B]/10 border border-[#C95A6B]/30 rounded-2xl shadow-sm p-6 mb-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <h3 class="text-xl font-semibold text-[#842A3B]">
+                    Halo, {{ Auth::user()->nama }} 👋
+                </h3>
+                <p class="text-gray-600 mt-1">
+                    Selamat datang kembali!
+                </p>
+            </div>
+
+            {{-- OPTIONAL: ILUSTRASI / ICON --}}
+            <div class="hidden md:block">
+                <img src="https://cdn-icons-png.flaticon.com/512/4221/4221419.png" alt="Welcome"
+                    class="w-20 h-20 opacity-80">
+            </div>
+        </div>
+    </div>
 
     {{-- Kartu Statistik --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    {{-- <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <div class="bg-white shadow-md rounded-xl p-4 flex justify-between items-center border border-[#842A3B]/20">
             <div>
                 <h5 class="text-sm text-gray-500">Total Jatah Cuti</h5>
@@ -83,51 +100,26 @@
                 <i class="fas fa-sun"></i>
             </div>
         </div>
-    </div>
+    </div> --}}
 
-    {{-- Table + Chart --}}
+
     <div class="bg-white rounded-2xl shadow-md p-6 mt-8 border border-[#842A3B]/20">
         <h5 class="font-semibold text-[#842A3B] mb-2">Jatah Cuti</h5>
-        <p class="text-gray-500 text-sm mb-4">Data jatah cuti pegawai</p>
         <div class="overflow-x-auto">
-            <table class="min-w-full text-sm text-gray-700">
-                <thead>
-                    <tr class="border-b bg-[#842A3B]/10 text-[#842A3B]">
-                        <th class="text-left py-2 px-3">NO</th>
-                        <th class="text-left py-2 px-3">JENIS CUTI</th>
-                        <th class="text-left py-2 px-3">TOTAL SISA CUTI</th>
-                        <th class="text-left py-2 px-3">TOTAL CUTI TERPAKAI</th>
-                        <th class="text-left py-2 px-3">AKSI</th>
+            <table class="min-w-full text-sm text-gray-700 border border-gray-100 rounded-lg" id="tabelJatah">
+                <thead class="bg-gradient-to-r from-[#842A3B] to-[#C95A6B] text-white">
+                    <tr>
+                        <th class="py-3 px-4 text-left rounded-tl-lg">No</th>
+                        <th class="py-3 px-4 text-left">Nama Pegawai</th>
+                        <th class="py-3 px-4 text-left">Nama Jenis Cuti</th>
+                        <th class="py-3 px-4 text-left">Jumlah Hari</th>
+                        <th class="py-3 px-4 text-left">Cuti Terpakai</th>
+                        <th class="py-3 px-4 text-left">Sisa Cuti</th>
+                        <th class="py-3 px-4 text-left">Keterangan</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr class="border-b hover:bg-[#842A3B]/5">
-                        <td class="py-2 px-3">1.</td>
-                        <td class="py-2 px-3">Cuti Tahunan</td>
-                        <td class="py-2 px-3">8 Hari</td>
-                        <td class="py-2 px-3">4 Hari</td>
-                        <td class="py-2 px-3">
-                            <button @click="detail = { jenis: 'Cuti Tahunan', sisa: '8 Hari', terpakai: '4 Hari' };
-                  showModal = true;
-                " class="bg-[#842A3B] hover:bg-[#C95A6B] text-white font-semibold text-xs px-4 py-1.5 rounded-md">
-                                Detail
-                            </button>
-                        </td>
-                    </tr>
-                    <tr class="hover:bg-[#842A3B]/5">
-                        <td class="py-2 px-3">2.</td>
-                        <td class="py-2 px-3">Cuti Besar</td>
-                        <td class="py-2 px-3">12 Hari</td>
-                        <td class="py-2 px-3">0 Hari</td>
-                        <td class="py-2 px-3">
-                            <button @click="
-                  detail = { jenis: 'Cuti Besar', sisa: '12 Hari', terpakai: '0 Hari' };
-                  showModal = true;
-                " class="bg-[#842A3B] hover:bg-[#C95A6B] text-white font-semibold text-xs px-4 py-1.5 rounded-md">
-                                Detail
-                            </button>
-                        </td>
-                    </tr>
+                <tbody class="divide-y divide-gray-100">
+                    {{-- Data dari DataTables --}}
                 </tbody>
             </table>
         </div>
@@ -137,95 +129,29 @@
     <div class="bg-white rounded-2xl shadow-md p-6 mt-8 border border-[#842A3B]/20">
         <h5 class="font-semibold text-[#842A3B] mb-4">Riwayat Cuti</h5>
         <div class="overflow-x-auto">
-            <table class="min-w-full text-sm text-gray-700">
-                <thead>
-                    <tr class="border-b bg-[#842A3B]/10 text-[#842A3B]">
-                        <th class="text-left py-2 px-3">NO</th>
-                        <th class="text-left py-2 px-3">TANGGAL MULAI</th>
-                        <th class="text-left py-2 px-3">TANGGAL AKHIR</th>
-                        <th class="text-left py-2 px-3">JENIS CUTI</th>
-                        <th class="text-left py-2 px-3">STATUS</th>
-                        <th class="text-left py-2 px-3">AKSI</th>
+            <table class="min-w-full text-sm text-gray-700" id="tabelCuti">
+                <thead class="bg-gradient-to-r from-[#842A3B] to-[#C95A6B] text-white">
+                    <tr>
+                        <th class="py-3 px-4 text-left rounded-tl-lg">No</th>
+                        <th class="py-3 px-4 text-left">Nama Pengaju</th>
+                        <th class="py-3 px-4 text-left">Role</th>
+                        <th class="py-3 px-4 text-left">Jenis Cuti</th>
+                        <th class="py-3 px-4 text-left">Tanggal Mulai</th>
+                        <th class="py-3 px-4 text-left">Tanggal Selesai</th>
+                        <th class="py-3 px-4 text-left">Jumlah Hari</th>
+                        <th class="py-3 px-4 text-left">Keterangan</th>
+                        <th class="py-3 px-4 text-left">Status</th>
+                        <th class="py-3 px-4 text-center rounded-tr-lg">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="border-b hover:bg-[#842A3B]/5">
-                        <td class="py-2 px-3">1.</td>
-                        <td class="py-2 px-3">10 Jan 2025</td>
-                        <td class="py-2 px-3">14 Jan 2025</td>
-                        <td class="py-2 px-3">Cuti Tahunan</td>
-                        <td class="py-2 px-3 text-green-600 font-semibold">Diterima</td>
-                        <td class="py-2 px-3">
-                            <button @click="
-                  detail = { jenis: 'Cuti Tahunan', mulai: '10 Jan 2025', akhir: '14 Jan 2025', status: 'Diterima' };
-                  showModal = true;
-                " class="bg-[#842A3B] hover:bg-[#C95A6B] text-white text-xs px-4 py-1.5 rounded-md">
-                                Detail
-                            </button>
-                        </td>
-                    </tr>
 
-                    <tr class="hover:bg-[#842A3B]/5">
-                        <td class="py-2 px-3">2.</td>
-                        <td class="py-2 px-3">20 Feb 2025</td>
-                        <td class="py-2 px-3">22 Feb 2025</td>
-                        <td class="py-2 px-3">Cuti Sakit</td>
-                        <td class="py-2 px-3 text-red-600 font-semibold">Ditolak</td>
-                        <td class="py-2 px-3">
-                            <button @click="
-                  detail = { jenis: 'Cuti Sakit', mulai: '20 Feb 2025', akhir: '22 Feb 2025', status: 'Ditolak' };
-                  showModal = true;
-                " class="bg-[#842A3B] hover:bg-[#C95A6B] text-white text-xs px-4 py-1.5 rounded-md">
-                                Detail
-                            </button>
-                        </td>
-                    </tr>
                 </tbody>
             </table>
         </div>
     </div>
-
-    {{-- MODAL DETAIL CUTI --}}
-    <div x-show="showModal" x-transition.opacity x-cloak @click.away="showModal = false"
-        class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-        <div class="bg-white rounded-xl shadow-lg w-96 p-6 relative">
-            <h3 class="text-lg font-semibold text-[#842A3B] mb-4">Detail Cuti</h3>
-
-            <div class="space-y-2 text-sm text-gray-700">
-                <template x-if="detail.jenis">
-                    <p><span class="font-semibold">Jenis Cuti:</span> <span x-text="detail.jenis"></span></p>
-                </template>
-                <template x-if="detail.sisa">
-                    <p><span class="font-semibold">Sisa Cuti:</span> <span x-text="detail.sisa"></span></p>
-                </template>
-                <template x-if="detail.terpakai">
-                    <p><span class="font-semibold">Terpakai:</span> <span x-text="detail.terpakai"></span></p>
-                </template>
-                <template x-if="detail.mulai">
-                    <p><span class="font-semibold">Tanggal Mulai:</span> <span x-text="detail.mulai"></span></p>
-                </template>
-                <template x-if="detail.akhir">
-                    <p><span class="font-semibold">Tanggal Akhir:</span> <span x-text="detail.akhir"></span></p>
-                </template>
-                <template x-if="detail.status">
-                    <p><span class="font-semibold">Status:</span> <span x-text="detail.status"></span></p>
-                </template>
-            </div>
-
-            <div class="mt-5 text-right">
-                <button @click="showModal = false"
-                    class="bg-[#842A3B] hover:bg-[#C95A6B] text-white text-sm font-semibold px-4 py-2 rounded-md">
-                    Tutup
-                </button>
-            </div>
-
-            <button @click="showModal = false"
-                class="absolute top-2 right-3 text-gray-400 hover:text-[#842A3B] text-lg">
-                &times;
-            </button>
-        </div>
-    </div>
 </div>
+
 
 {{-- Chart --}}
 @push('scripts')
@@ -236,6 +162,152 @@
 </style>
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.datatables.net/2.0.3/js/dataTables.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+                var tabelCuti = $('#tabelCuti').DataTable({
+                    ajax: {
+                        url: "{{ route('getAjukanCuti') }}",
+                        dataSrc: function(json) {
+                            console.log('Response dari server:', json);
+                            return json.data || [];
+                        }
+                    },
+                    columns: [{
+                            data: null,
+                            render: (data, type, row, meta) => meta.row + 1
+                        },
+                        {
+                            data: "user_id",
+                            render: (data, type, row) => row.user ? row.user.nama : data
+                        },
+                        {
+                            data: "user.golongan"
+                        },
+                        {
+                            data: "jenis_cuti.nama_cuti"
+                        },
+                        {
+                            data: "tanggal_awal"
+                        },
+                        {
+                            data: "tanggal_akhir"
+                        },
+                        {
+                            data: "jumlah_hari"
+                        },
+                        {
+                            data: "keterangan"
+                        },
+                        {
+                            data: "status",
+                            render: function(data) {
+                                switch (data) {
+                                    case 1:
+                                        return '<span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-xs font-medium">Sedang diverifikasi kepegawaian</span>';
+                                    case 2:
+                                        return '<span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-medium">Menunggu persetujuan atasan langsung</span>';
+                                    case 3:
+                                        return '<span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-medium">Sudah disetujui atasan langsung</span>';
+                                    case 4:
+                                        return '<span class="bg-orange-100 text-orange-700 px-2 py-1 rounded text-xs font-medium">Menunggu persetujuan ketua</span>';
+                                    case 5:
+                                        return '<span class="bg-green-200 text-green-800 px-2 py-1 rounded text-xs font-medium">Sudah disetujui ketua</span>';
+                                    default:
+                                        return '<span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs font-medium">Status tidak diketahui</span>';
+                                }
+                            }
+                        },
+                        {
+                            data: "id",
+                            className: "text-center",
+                            render: data => `
+                    <button class="bg-gradient-to-r from-[#842A3B] to-[#C95A6B] text-white px-3 py-1 rounded-md text-sm shadow hover:opacity-90 transition detail-btn" data-id="${data}">
+                        <i class="fa-solid fa-circle-info mr-1"></i> Detail
+                    </button>`
+                        }
+                    ],
+                    responsive: true,
+                    language: {
+                        search: "Cari:",
+                        lengthMenu: "Tampilkan _MENU_ entri",
+                        info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
+                        zeroRecords: "Tidak ada data ditemukan",
+                        paginate: {
+                            next: "›",
+                            previous: "‹"
+                        }
+                    }
+                });
+
+                $(document).on('click', '.detail-btn', function() {
+                    const id = $(this).data('id');
+                    if (id) window.location.href = `/detail_pengajuan_cuti/${id}`;
+                });
+            });
+</script>
+
+<script>
+    $(document).ready(function() {
+                var id = {{ Auth::user()->id }}; // pakai property id
+                console.log(id);
+
+                var tabelJatah = $('#tabelJatah').DataTable({
+                    ajax: {
+                        url: `/getJatahCutiById/${id}`,
+                        dataSrc: function(json) {
+                            return json.data || [];
+                        }
+                    },
+                    columns: [{
+                            data: null,
+                            render: (data, type, row, meta) => meta.row + 1
+                        }, // No
+                        {
+                            data: null,
+                            render: (data, type, row) => row.user ? row.user.nama : row.user_id
+                        },
+                        {
+                            data: null,
+                            render: (data, type, row) => row.jenis_cuti ? row.jenis_cuti.nama_cuti : '-'
+                        }, // Nama Jenis Cuti
+                        {
+                            data: null,
+                            render: (data, type, row) => row.jenis_cuti ? row.jenis_cuti.jumlah_hari +
+                                ' hari' : '-'
+                        },
+                        {
+                            data: "cuti_terpakai",
+                            render: (data) => data + ' hari'
+                        },
+                        {
+                            data: "sisa_cuti",
+                            render: (data) => data + ' hari'
+                        },
+                        {
+                            data: null,
+                            render: (data, type, row) => row.jenisCuti ? (row.jenisCuti.keterangan ?? '-') :
+                                '-'
+                        },
+                    ],
+                    responsive: true,
+                    language: {
+                        search: "Cari:",
+                        lengthMenu: "Tampilkan _MENU_ entri",
+                        info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
+                        zeroRecords: "Tidak ada data ditemukan",
+                        paginate: {
+                            next: "›",
+                            previous: "‹"
+                        }
+                    }
+                });
+            });
+</script>
 <script>
     const ctx = document.getElementById('chart-line').getContext('2d');
             new Chart(ctx, {
