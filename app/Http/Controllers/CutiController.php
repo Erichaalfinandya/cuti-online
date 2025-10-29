@@ -22,9 +22,16 @@ class CutiController extends Controller
 
     public function detail_pengajuan_cuti($id)
     {
-        // cukup kirim id ke view, JS pada view akan fetch data via AJAX
-        return view('detail_pengajuan_cuti', ['id' => $id]);
+        $data = AjukanCutiModel::with('riwayatCutis')->find($id);
+        if (!$data) abort(404);
+
+        $userId = auth()->user()->id; // ambil id sebenarnya
+        $sudahAcc = $data->riwayatCutis->contains('user_id', $userId);
+        // dd($sudahAcc);
+
+        return view('detail_pengajuan_cuti', compact('id', 'sudahAcc'));
     }
+
     public function list_ajukan_cuti()
     {
         return view('ajukan_cuti');
@@ -231,7 +238,7 @@ class CutiController extends Controller
         $jatahCuti = JatahCutiModel::with('jenisCuti')
             ->where('user_id', $id)
             ->get();
-            
+
         if ($jatahCuti->isEmpty()) {
             return response()->json(['message' => 'Data jatah cuti tidak ditemukan'], 404);
         }
@@ -437,37 +444,7 @@ class CutiController extends Controller
 
 
     //AKSI KEPEGAWAIAN
-    // public function aksi_kepegawaian(Request $request)
-    // {
-    //     $validated = $request->validate([
-    //         'ajukan_cuti_id' => 'required|exists:ajukan_cutis,id',
-    //         'acc' => 'required|boolean',
-    //         'keterangan' => 'nullable|string|max:255',
-    //     ]);
 
-    //     $data = [
-    //         'tanggal' => now(), // waktu saat ini
-    //         // 'user_id' => auth()->user()->nama, // user login
-    //         // 'user_id' => auth()->id(),
-    //         'user_id' => auth()->user()->id, // bukan NIP
-    //         'ajukan_cuti_id' => $validated['ajukan_cuti_id'],
-    //         'acc' => $validated['acc'],
-    //         'keterangan' => $validated['keterangan'] ?? null,
-    //     ];
-
-    //     // Simpan ke tabel riwayat cuti
-    //     $riwayat = RiwayatCutiModel::create($data);
-
-    //     // Update status ajukan cuti menjadi 2
-    //     AjukanCutiModel::where('id', $validated['ajukan_cuti_id'])
-    //         ->update(['status' => 2]);
-
-    //     return response()->json([
-    //         'status' => 'success',
-    //         'message' => 'Aksi kepegawaian berhasil disimpan dan status cuti diperbarui!',
-    //         'data' => $riwayat
-    //     ]);
-    // }
     public function aksi_kepegawaian(Request $request)
     {
         $validated = $request->validate([

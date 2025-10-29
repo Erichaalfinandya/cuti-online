@@ -63,6 +63,7 @@
         <div class="col-6">
             {{-- AKSI KEPEGAWAIAN --}}
             @hasanyrole('kepegawaian|sekretaris|panitera|panmud_1|panmud_2|panmud_3|kasubbag_1|kasubbag_2|kasubbag_3|ketua')
+            @if(!$sudahAcc)
             <div class="row">
                 <div class="col-12">
                     <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-8 mt-6">
@@ -109,6 +110,7 @@
                     </div>
                 </div>
             </div>
+            @endif
             @endhasanyrole
             <div class="row">
                 <div class="col-12">
