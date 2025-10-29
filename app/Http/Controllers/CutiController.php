@@ -47,12 +47,87 @@ class CutiController extends Controller
         return view('master-jeniscuti');
     }
 
+    // public function getAjukanCuti()
+    // {
+    //     // $data = AjukanCutiModel::all();
+    //     $cutis = AjukanCutiModel::with('user', 'jenisCuti')->get();
+    //     return response()->json(['data' => $cutis]);
+    // }
+
     public function getAjukanCuti()
     {
-        // $data = AjukanCutiModel::all();
-        $cutis = AjukanCutiModel::with('user', 'jenisCuti')->get();
-        return response()->json(['data' => $cutis]);
+        $user = auth()->user();
+        $query = AjukanCutiModel::with(['user', 'jenisCuti']);
+
+        switch ($user->golongan) {
+            case 'kepegawaian':
+            case 'ketua':
+            case 'hakim':
+                // Bisa lihat semua
+                break;
+
+            case 'panmud_1':
+                $query->whereHas('user', fn($q) => $q->where('golongan', 'staf_panitera_1'));
+                break;
+            case 'panmud_2':
+                $query->whereHas('user', fn($q) => $q->where('golongan', 'staf_panitera_2'));
+                break;
+            case 'panmud_3':
+                $query->whereHas('user', fn($q) => $q->where('golongan', 'staf_panitera_3'));
+                break;
+
+            case 'kasubbag_1':
+                $query->whereHas('user', fn($q) => $q->where('golongan', 'staf_sekretaris_1'));
+                break;
+            case 'kasubbag_2':
+                $query->whereHas('user', fn($q) => $q->where('golongan', 'staf_sekretaris_2'));
+                break;
+            case 'kasubbag_3':
+                $query->whereHas('user', fn($q) => $q->where('golongan', 'staf_sekretaris_3'));
+                break;
+
+            case 'panitera':
+                $query->whereHas(
+                    'user',
+                    fn($q) =>
+                    $q->whereIn('golongan', [
+                        'panmud',
+                        'panmud_1',
+                        'panmud_2',
+                        'panmud_3',
+                        'staf_panitera_1',
+                        'staf_panitera_2',
+                        'staf_panitera_3'
+                    ])
+                );
+                break;
+
+            case 'sekretaris':
+                $query->whereHas(
+                    'user',
+                    fn($q) =>
+                    $q->whereIn('golongan', [
+                        'kasubbag_1',
+                        'kasubbag_2',
+                        'kasubbag_3',
+                        'staf_sekretaris_1',
+                        'staf_sekretaris_2',
+                        'staf_sekretaris_3'
+                    ])
+                );
+                break;
+
+            default:
+                // Staf biasa hanya lihat dirinya sendiri
+                $query->where('user_id', $user->id);
+                break;
+        }
+
+        $data = $query->get();
+
+        return response()->json(['data' => $data]);
     }
+
 
 
     // public function getUser()
