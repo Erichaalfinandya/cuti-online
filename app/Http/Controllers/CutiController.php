@@ -25,12 +25,12 @@ class CutiController extends Controller
         $data = AjukanCutiModel::with('riwayatCutis')->find($id);
         if (!$data) abort(404);
 
-        $userId = auth()->user()->id; // ambil id sebenarnya
+        $userId = auth()->user()->id;
         $sudahAcc = $data->riwayatCutis->contains('user_id', $userId);
-        // dd($sudahAcc);
 
-        return view('detail_pengajuan_cuti', compact('id', 'sudahAcc'));
+        return view('detail_pengajuan_cuti', compact('id', 'sudahAcc', 'data'));
     }
+
 
     public function list_ajukan_cuti()
     {
@@ -65,93 +65,116 @@ class CutiController extends Controller
     {
         $user = auth()->user();
         $query = AjukanCutiModel::with(['user', 'jenisCuti']);
-
         $golongan = trim($user->golongan); // bersihkan login user
 
         switch ($golongan) {
             case 'kepegawaian':
             case 'ketua':
             case 'hakim':
-                // Bisa lihat semua
+                // Bisa lihat semua → otomatis termasuk diri sendiri
                 break;
 
             case 'panmud_1':
-                $query->whereHas(
-                    'user',
-                    fn($q) =>
-                    $q->whereRaw("TRIM(REPLACE(REPLACE(golongan, '\r', ''), '\n', '')) = ?", ['staf_panitera_1'])
-                );
+                $query->where(function ($q) use ($user) {
+                    $q->whereHas(
+                        'user',
+                        fn($q2) =>
+                        $q2->whereRaw("TRIM(REPLACE(REPLACE(golongan, '\r', ''), '\n', '')) = ?", ['staf_panitera_1'])
+                    )
+                        ->orWhere('user_id', $user->id);
+                });
                 break;
 
             case 'panmud_2':
-                $query->whereHas(
-                    'user',
-                    fn($q) =>
-                    $q->whereRaw("TRIM(REPLACE(REPLACE(golongan, '\r', ''), '\n', '')) = ?", ['staf_panitera_2'])
-                );
+                $query->where(function ($q) use ($user) {
+                    $q->whereHas(
+                        'user',
+                        fn($q2) =>
+                        $q2->whereRaw("TRIM(REPLACE(REPLACE(golongan, '\r', ''), '\n', '')) = ?", ['staf_panitera_2'])
+                    )
+                        ->orWhere('user_id', $user->id);
+                });
                 break;
 
             case 'panmud_3':
-                $query->whereHas(
-                    'user',
-                    fn($q) =>
-                    $q->whereRaw("TRIM(REPLACE(REPLACE(golongan, '\r', ''), '\n', '')) = ?", ['staf_panitera_3'])
-                );
+                $query->where(function ($q) use ($user) {
+                    $q->whereHas(
+                        'user',
+                        fn($q2) =>
+                        $q2->whereRaw("TRIM(REPLACE(REPLACE(golongan, '\r', ''), '\n', '')) = ?", ['staf_panitera_3'])
+                    )
+                        ->orWhere('user_id', $user->id);
+                });
                 break;
 
             case 'kasubbag_1':
-                $query->whereHas(
-                    'user',
-                    fn($q) =>
-                    $q->whereRaw("TRIM(REPLACE(REPLACE(golongan, '\r', ''), '\n', '')) = ?", ['staf_sekretaris_1'])
-                );
+                $query->where(function ($q) use ($user) {
+                    $q->whereHas(
+                        'user',
+                        fn($q2) =>
+                        $q2->whereRaw("TRIM(REPLACE(REPLACE(golongan, '\r', ''), '\n', '')) = ?", ['staf_sekretaris_1'])
+                    )
+                        ->orWhere('user_id', $user->id);
+                });
                 break;
 
             case 'kasubbag_2':
-                $query->whereHas(
-                    'user',
-                    fn($q) =>
-                    $q->whereRaw("TRIM(REPLACE(REPLACE(golongan, '\r', ''), '\n', '')) = ?", ['staf_sekretaris_2'])
-                );
+                $query->where(function ($q) use ($user) {
+                    $q->whereHas(
+                        'user',
+                        fn($q2) =>
+                        $q2->whereRaw("TRIM(REPLACE(REPLACE(golongan, '\r', ''), '\n', '')) = ?", ['staf_sekretaris_2'])
+                    )
+                        ->orWhere('user_id', $user->id);
+                });
                 break;
 
             case 'kasubbag_3':
-                $query->whereHas(
-                    'user',
-                    fn($q) =>
-                    $q->whereRaw("TRIM(REPLACE(REPLACE(golongan, '\r', ''), '\n', '')) = ?", ['staf_sekretaris_3'])
-                );
+                $query->where(function ($q) use ($user) {
+                    $q->whereHas(
+                        'user',
+                        fn($q2) =>
+                        $q2->whereRaw("TRIM(REPLACE(REPLACE(golongan, '\r', ''), '\n', '')) = ?", ['staf_sekretaris_3'])
+                    )
+                        ->orWhere('user_id', $user->id);
+                });
                 break;
 
             case 'panitera':
-                $query->whereHas(
-                    'user',
-                    fn($q) =>
-                    $q->whereIn(DB::raw("TRIM(REPLACE(REPLACE(golongan, '\r', ''), '\n', ''))"), [
-                        'panmud',
-                        'panmud_1',
-                        'panmud_2',
-                        'panmud_3',
-                        'staf_panitera_1',
-                        'staf_panitera_2',
-                        'staf_panitera_3'
-                    ])
-                );
+                $query->where(function ($q) use ($user) {
+                    $q->whereHas(
+                        'user',
+                        fn($q2) =>
+                        $q2->whereIn(DB::raw("TRIM(REPLACE(REPLACE(golongan, '\r', ''), '\n', ''))"), [
+                            'panmud',
+                            'panmud_1',
+                            'panmud_2',
+                            'panmud_3',
+                            'staf_panitera_1',
+                            'staf_panitera_2',
+                            'staf_panitera_3'
+                        ])
+                    )
+                        ->orWhere('user_id', $user->id);
+                });
                 break;
 
             case 'sekretaris':
-                $query->whereHas(
-                    'user',
-                    fn($q) =>
-                    $q->whereIn(DB::raw("TRIM(REPLACE(REPLACE(golongan, '\r', ''), '\n', ''))"), [
-                        'kasubbag_1',
-                        'kasubbag_2',
-                        'kasubbag_3',
-                        'staf_sekretaris_1',
-                        'staf_sekretaris_2',
-                        'staf_sekretaris_3'
-                    ])
-                );
+                $query->where(function ($q) use ($user) {
+                    $q->whereHas(
+                        'user',
+                        fn($q2) =>
+                        $q2->whereIn(DB::raw("TRIM(REPLACE(REPLACE(golongan, '\r', ''), '\n', ''))"), [
+                            'kasubbag_1',
+                            'kasubbag_2',
+                            'kasubbag_3',
+                            'staf_sekretaris_1',
+                            'staf_sekretaris_2',
+                            'staf_sekretaris_3'
+                        ])
+                    )
+                        ->orWhere('user_id', $user->id);
+                });
                 break;
 
             default:
@@ -164,6 +187,7 @@ class CutiController extends Controller
 
         return response()->json(['data' => $data]);
     }
+
 
     // public function getUser()
     // {
