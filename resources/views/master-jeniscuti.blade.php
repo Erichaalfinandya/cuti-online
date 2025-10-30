@@ -31,7 +31,7 @@
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
-                
+
             </tbody>
         </table>
     </div>
@@ -149,6 +149,19 @@
                         return json.data || [];
                     }
                 },
+                  dom: "<'row mb-2'<'col-sm-6'l><'col-sm-6 d-flex justify-content-end'f>>" +
+                    // Atas: length kiri, search kanan
+                    "<'row'<'col-12'tr>>" + // Tabel
+                    "<'row mt-2'<'col-sm-6 d-flex'B><'col-sm-6 text-end'p>>" +
+                    // Tombol kiri, pagination kanan
+                    "<'row mt-1'<'col-sm-6'i>>", // Info di bawah kir
+                buttons: [
+                    'copy', // copy ke clipboard
+                    'csv', // ekspor CSV
+                    'excel', // ekspor Excel
+                    'pdf', // PDF
+                    'print' // print page
+                ],
                 columns: [
                     { data: null, render: (data, type, row, meta) => meta.row + 1 },
                     { data: "nama_cuti" },

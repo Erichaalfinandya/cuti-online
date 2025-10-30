@@ -239,10 +239,7 @@ class CutiController extends Controller
             ->where('user_id', $id)
             ->get();
 
-        if ($jatahCuti->isEmpty()) {
-            return response()->json(['message' => 'Data jatah cuti tidak ditemukan'], 404);
-        }
-
+        // Selalu return 200, data bisa kosong
         return response()->json(['data' => $jatahCuti]);
     }
 

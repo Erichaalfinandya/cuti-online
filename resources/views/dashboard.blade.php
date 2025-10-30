@@ -260,6 +260,7 @@
                     ajax: {
                         url: `/getJatahCutiById/${id}`,
                         dataSrc: function(json) {
+                            console.log(json);
                             return json.data || [];
                         }
                     },
@@ -308,50 +309,6 @@
                 });
             });
 </script>
-<script>
-    const ctx = document.getElementById('chart-line').getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
-                    datasets: [{
-                        label: 'Cuti Terpakai',
-                        data: [0, 10, 30, 20, 40, 30, 50],
-                        borderColor: '#C95A6B',
-                        backgroundColor: 'rgba(201, 90, 107, 0.2)',
-                        tension: 0.4,
-                        fill: true
-                    }, {
-                        label: 'Sisa Cuti',
-                        data: [0, 20, 10, 40, 30, 50, 40],
-                        borderColor: '#842A3B',
-                        backgroundColor: 'rgba(132, 42, 59, 0.2)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: '#eee'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                color: 'transparent'
-                            }
-                        }
-                    }
-                }
-            });
-</script>
+
 @endpush
 @endsection

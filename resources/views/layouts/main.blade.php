@@ -40,8 +40,7 @@
                 <ul class="space-y-3">
                     <!-- DASHBOARD -->
                     <li>
-                        <a href="{{ url('/dashboard') }}"
-                            class="flex items-center p-3 rounded-xl transition duration-200
+                        <a href="{{ url('/dashboard') }}" class="flex items-center p-3 rounded-xl transition duration-200
               {{ request()->is('dashboard')
                   ? 'bg-gradient-to-r from-[#842A3B] to-[#C95A6B] text-white shadow-md'
                   : 'hover:bg-[#842A3B]/10 text-slate-600 hover:text-[#842A3B]' }}">
@@ -60,8 +59,7 @@
 
                     <!-- FORMULIR -->
                     <li>
-                        <a href="{{ route('formulir') }}"
-                            class="flex items-center p-3 rounded-xl transition duration-200
+                        <a href="{{ route('formulir') }}" class="flex items-center p-3 rounded-xl transition duration-200
               {{ request()->routeIs('formulir')
                   ? 'bg-gradient-to-r from-[#842A3B] to-[#C95A6B] text-white shadow-md'
                   : 'hover:bg-[#842A3B]/10 hover:text-[#842A3B] text-slate-600' }}">
@@ -73,8 +71,7 @@
                     <!-- JATAH CUTI -->
                     {{-- @role('kepegawaian') --}}
                     <li>
-                        <a href="{{ route('jatah_cuti') }}"
-                            class="flex items-center p-3 rounded-xl transition duration-200
+                        <a href="{{ route('jatah_cuti') }}" class="flex items-center p-3 rounded-xl transition duration-200
               {{ request()->routeIs('jatah_cuti')
                   ? 'bg-gradient-to-r from-[#842A3B] to-[#C95A6B] text-white shadow-md'
                   : 'hover:bg-[#842A3B]/10 hover:text-[#842A3B] text-slate-600' }}">
@@ -86,8 +83,7 @@
                     {{-- @endrole --}}
                     <!-- RIWAYAT CUTI -->
                     <li>
-                        <a href="{{ route('list_ajukan_cuti') }}"
-                            class="flex items-center p-3 rounded-xl transition duration-200
+                        <a href="{{ route('list_ajukan_cuti') }}" class="flex items-center p-3 rounded-xl transition duration-200
               {{ request()->routeIs('list_ajukan_cuti')
                   ? 'bg-gradient-to-r from-[#842A3B] to-[#C95A6B] text-white shadow-md'
                   : 'hover:bg-[#842A3B]/10 hover:text-[#842A3B] text-slate-600' }}">
@@ -98,26 +94,25 @@
                     </li>
                     <!-- MASTER JENIS CUTI -->
                     @role('kepegawaian')
-                        <li>
-                            <a href="{{ route('master_jenis_cuti') }}"
-                                class="flex items-center p-3 rounded-xl transition duration-200
+                    <li>
+                        <a href="{{ route('master_jenis_cuti') }}" class="flex items-center p-3 rounded-xl transition duration-200
               {{ request()->routeIs('master_jenis_cuti')
                   ? 'bg-gradient-to-r from-[#842A3B] to-[#C95A6B] text-white shadow-md'
                   : 'hover:bg-[#842A3B]/10 hover:text-[#842A3B] text-slate-600' }}">
-                                <i
-                                    class="fa-solid fa-clipboard-list mr-3 {{ request()->routeIs('master_jenis_cuti') ? 'text-white' : 'text-[#842A3B]' }}"></i>
-                                Master Jenis Cuti
-                            </a>
-                        </li>
+                            <i
+                                class="fa-solid fa-clipboard-list mr-3 {{ request()->routeIs('master_jenis_cuti') ? 'text-white' : 'text-[#842A3B]' }}"></i>
+                            Master Jenis Cuti
+                        </a>
+                    </li>
                     @endrole
                     <!-- TRACKING CUTI -->
                     <li>
-                        <a href="{{ route('tracking') }}"
-                            class="flex items-center p-3 rounded-xl transition duration-200
+                        <a href="{{ route('tracking') }}" class="flex items-center p-3 rounded-xl transition duration-200
                             {{ request()->routeIs('tracking')
                                 ? 'bg-gradient-to-r from-[#842A3B] to-[#C95A6B] text-white shadow-md'
                                 : 'hover:bg-[#842A3B]/10 hover:text-[#842A3B] text-slate-600' }}">
-                            <i class="fa-solid fa-route mr-3 {{ request()->routeIs('tracking') ? 'text-white' : 'text-[#842A3B]' }}"></i>
+                            <i
+                                class="fa-solid fa-route mr-3 {{ request()->routeIs('tracking') ? 'text-white' : 'text-[#842A3B]' }}"></i>
                             Tracking Cuti
                         </a>
                     </li>
@@ -131,8 +126,7 @@
                     {{ Auth::user()->jabatan }} <br>
                     {{ Auth::user()->golongan }}
                 </p>
-                <button id="btnLogout" type="button"
-                    class="flex items-center gap-2 px-4 py-2 rounded-lg text-white font-semibold
+                <button id="btnLogout" type="button" class="flex items-center gap-2 px-4 py-2 rounded-lg text-white font-semibold
                         bg-gradient-to-r from-[#842A3B] to-[#C95A6B]
                         hover:from-[#C95A6B] hover:to-[#842A3B]
                         transition-all duration-300 shadow-md hover:shadow-lg">
@@ -153,6 +147,15 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.datatables.net/2.0.3/js/dataTables.min.js"></script>
+    <!-- Tambahkan CSS/JS Buttons -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css">
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
 
 
     <!-- Tailwind -->
