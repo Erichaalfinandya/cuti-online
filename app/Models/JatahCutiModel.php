@@ -16,7 +16,6 @@ class JatahCutiModel extends Model
         return $this->belongsTo(UserModel::class, 'user_id');
     }
 
-    
 
     public function jenisCuti()
     {

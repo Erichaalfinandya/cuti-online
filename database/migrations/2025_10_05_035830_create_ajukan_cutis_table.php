@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer('jumlah_hari');
             $table->text('keterangan');
             $table->string('alamat_cuti');
+            $table->string('ttd_pemohon');
             $table->integer('status');
             $table->timestamps();
         });

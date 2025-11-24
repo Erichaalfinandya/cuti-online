@@ -58,6 +58,17 @@
                         class="w-full border border-gray-300 rounded-lg px-4 py-2.5 shadow-sm focus:ring-2 focus:ring-[#C95A6B]/40 focus:border-[#C95A6B] focus:outline-none transition resize-none"
                         placeholder="Masukkan keterangan tambahan (opsional)"></textarea>
                 </div>
+                <div>
+                    <label for="alamat_cuti" class="block text-sm font-semibold text-slate-600 mb-1">
+                        Alamat Selama Cuti
+                    </label>
+
+                    <textarea id="alamat_cuti" id="alamat_cuti" name="alamat_cuti" rows="3" disabled  class="w-full border border-gray-300 rounded-lg px-4 py-2.5 shadow-sm
+                    focus:ring-2 focus:ring-[#C95A6B]/40 focus:border-[#C95A6B]
+                    focus:outline-none transition resize-none"
+                        placeholder="Masukkan alamat tempat tinggal selama cuti..." required></textarea>
+                </div>
+
             </div>
         </div>
         <div class="col-6">
@@ -149,6 +160,7 @@
                         $('#tanggal_akhir').val(d.tanggal_akhir);
                         $('#jumlah_hari').val(d.jumlah_hari);
                         $('#keterangan').val(d.keterangan);
+                        $('#alamat_cuti').val(d.alamat_cuti);
 
                         // tampilkan riwayat cuti
                         const container = $('#riwayat-container');

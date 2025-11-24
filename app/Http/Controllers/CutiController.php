@@ -382,12 +382,33 @@ class CutiController extends Controller
             'tanggal_akhir' => 'required|date|after_or_equal:tanggal_awal',
             'jumlah_hari' => 'required|integer|min:1',
             'status' => 'required|integer',
+            'alamat_cuti' => 'nullable|string|max:255',
+            'ttd_pemohon' => 'required|string', // base64
             'keterangan' => 'nullable|string|max:255',
         ]);
 
         DB::beginTransaction();
 
         try {
+            // === SIMPAN TTD SEBAGAI FILE ===
+            if (isset($validated['ttd_pemohon'])) {
+                $ttdBase64 = $validated['ttd_pemohon'];
+                // hapus prefix base64 jika ada
+                $ttdBase64 = preg_replace('/^data:image\/\w+;base64,/', '', $ttdBase64);
+                $ttdBase64 = str_replace(' ', '+', $ttdBase64);
+                $imageData = base64_decode($ttdBase64);
+
+                $filename = 'ttd_' . $validated['user_id'] . '_' . time() . '.png';
+                $folder = public_path('uploads/ttd/');
+                if (!file_exists($folder)) {
+                    mkdir($folder, 0755, true);
+                }
+                file_put_contents($folder . $filename, $imageData);
+
+                // ganti value ttd di DB menjadi path file
+                $validated['ttd_pemohon'] = 'uploads/ttd/' . $filename;
+            }
+
             // Cek apakah user punya jatah cuti untuk jenis cuti tersebut
             $jatahCuti = JatahCutiModel::where('user_id', $validated['user_id'])
                 ->where('jenis_cuti_id', $validated['jenis_cuti_id'])
@@ -400,7 +421,7 @@ class CutiController extends Controller
                 ], 404);
             }
 
-            // Cek apakah sisa cuti cukup
+            // Cek sisa cuti
             if ($jatahCuti->sisa_cuti < $validated['jumlah_hari']) {
                 return response()->json([
                     'status' => 'error',
@@ -431,6 +452,7 @@ class CutiController extends Controller
         }
     }
 
+
     public function edit_ajukan_cuti(Request $request, $id)
     {
         $request->validate([
@@ -441,6 +463,7 @@ class CutiController extends Controller
             'jumlah_hari' => 'required|integer',
             'status' => 'required|integer',
             'keterangan' => 'nullable|string|max:255',
+            'alamat_cuti' => 'nullable|string|max:255',
         ]);
 
 
@@ -588,6 +611,24 @@ class CutiController extends Controller
             $word->setValue('alamat_cuti', $cuti->pegawai->alamat_cuti ?? '-');
             $word->setValue('telp', $cuti->pegawai->no_telp ?? '-');
             $word->setValue('jenis_cuti_diambil', $cuti->jenisCuti->nama_cuti);
+
+            // path ttd_pemohon dari DB
+            $ttdPath = public_path($cuti->ttd_pemohon);
+
+            // cek apakah file ada
+            if (file_exists($ttdPath)) {
+                $word->setImageValue('ttd_pemohon', array(
+                    'path' => $ttdPath,
+                    'width' => 150,   // sesuaikan ukuran
+                    'height' => 50,
+                    'ratio' => true
+                ));
+            } else {
+                Log::warning("TTD pemohon tidak ditemukan untuk user_id={$cuti->user_id}", [
+                    'path' => $ttdPath
+                ]);
+            }
+
 
             $atasanLangsungIds = [6, 7, 8, 10, 11, 12];
 
