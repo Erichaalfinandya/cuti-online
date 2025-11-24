@@ -18,7 +18,8 @@ return new class extends Migration
             $table->date('tanggal_awal');
             $table->date('tanggal_akhir');
             $table->integer('jumlah_hari');
-            $table->text('keterangan')->nullable();
+            $table->text('keterangan');
+            $table->string('alamat_cuti');
             $table->integer('status');
             $table->timestamps();
         });

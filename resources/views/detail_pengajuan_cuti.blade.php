@@ -94,14 +94,6 @@
                                 </div>
                             </div>
                             {{-- @endrole --}}
-                            @role('ketua')
-                            <div class="mb-4">
-                                <label class="block text-sm font-semibold text-slate-600 mb-1">Aksi Ketua</label>
-                                <div class="flex items-center space-x-4">
-                                    <button class="btn btn-success">TTE</button>
-                                </div>
-                            </div>
-                            @endrole
                             <div class="mb-4">
                                 <div class="flex items-center space-x-4">
                                     <button class="btn btn-success">Simpan</button>
@@ -117,6 +109,14 @@
                 <div class="col-12">
                     <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-8 mt-6">
                         <h2>Riwayat Persetujuan</h2>
+                        <div class="mb-4">
+                            <div class="flex items-center space-x-4">
+                                <button onclick="window.location.href='{{ route('cuti.generate-word', $data->id) }}'"
+                                    class="btn btn-success">
+                                    Download Surat Cuti
+                                </button>
+                            </div>
+                        </div>
                         <div id="riwayat-container">
                             <p class="text-gray-500">Belum ada riwayat persetujuan.</p>
                         </div>

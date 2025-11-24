@@ -28,4 +28,9 @@ class AjukanCutiModel extends Model
     {
         return $this->hasMany(RiwayatCutiModel::class, 'ajukan_cuti_id');
     }
+
+    public function pegawai()
+    {
+        return $this->belongsTo(UserModel::class, 'user_id');
+    }
 }

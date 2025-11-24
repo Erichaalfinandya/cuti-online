@@ -17,6 +17,9 @@ return new class extends Migration
             $table->string('nama');
             $table->string('jabatan');
             $table->string('golongan');
+            $table->string('masa_kerja');
+            $table->string('unit_kerja');
+            $table->string('no_telp');
             $table->string('password')->nullable();
             $table->timestamps();
         });

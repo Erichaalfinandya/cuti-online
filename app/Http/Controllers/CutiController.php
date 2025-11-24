@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\DB;
-use Log;
+
 use App\Models\UserModel;
 use App\Models\RiwayatCuti;
 use Illuminate\Http\Request;
@@ -12,6 +11,9 @@ use App\Models\JenisCutiModel;
 use App\Models\AjukanCutiModel;
 use App\Models\RiwayatCutiModel;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log as Log;
+use PhpOffice\PhpWord\TemplateProcessor;
 
 class CutiController extends Controller
 {
@@ -183,7 +185,7 @@ class CutiController extends Controller
                 break;
         }
 
-        $data = $query->get();
+        $data = $query->orderBy('id', 'desc')->get();
 
         return response()->json(['data' => $data]);
     }
@@ -505,5 +507,156 @@ class CutiController extends Controller
             'message' => 'Aksi kepegawaian berhasil disimpan dan status cuti diperbarui!',
             'data' => $riwayat
         ]);
+    }
+
+    public function generate_word($id)
+    {
+        try {
+            Log::info("Generate Word: mulai proses untuk cuti_id={$id}");
+
+            $cuti = AjukanCutiModel::with('pegawai')->findOrFail($id);
+            Log::info("Generate Word: data cuti ditemukan", [
+                'nama' => $cuti->pegawai->nama,
+                'nip' => $cuti->pegawai->nip
+            ]);
+
+            // path template
+            $templatePath = storage_path('app/template-cuti.docx');
+
+            if (!file_exists($templatePath)) {
+                Log::error("Generate Word: template tidak ditemukan", [
+                    'path' => $templatePath
+                ]);
+                abort(500, "Template tidak ditemukan");
+            }
+
+            Log::info("Generate Word: load template", ['path' => $templatePath]);
+            $word = new TemplateProcessor($templatePath);
+
+
+            // isi placeholder
+            $word->setValue('nama', $cuti->pegawai->nama);
+            $word->setValue('jabatan', $cuti->pegawai->jabatan);
+            $word->setValue('unit_kerja', $cuti->pegawai->unit_kerja);
+            $word->setValue('nip', $cuti->pegawai->nip);
+            $word->setValue('masa_kerja', $cuti->pegawai->masa_kerja);
+
+            $jenisCutis = JenisCutiModel::all();
+            $selectedId = $cuti->jenis_cuti_id;
+            // clone baris sesuai jumlah record
+            $word->cloneRow('jenis_cuti_no', $jenisCutis->count());
+
+            foreach ($jenisCutis as $i => $jc) {
+                $idx = $i + 1;
+
+                $word->setValue("jenis_cuti_no#{$idx}", $idx);
+                $word->setValue("jenis_cuti_nama#{$idx}", $jc->nama_cuti);
+
+                // centang hanya yang dipilih
+                $word->setValue(
+                    "jenis_cuti_check#{$idx}",
+                    $jc->id == $selectedId ? '✔' : ''
+                );
+            }
+
+            $word->setValue('alasan_cuti', $cuti->keterangan);
+            $word->setValue('hari', $cuti->jumlah_hari);
+            $word->setValue('tanggal_mulai', date('d-m-Y', strtotime($cuti->tanggal_awal)));
+            $word->setValue('tanggal_selesai', date('d-m-Y', strtotime($cuti->tanggal_akhir)));
+
+            $jatah = JatahCutiModel::where('user_id', $cuti->user_id)
+                ->with('jenisCuti')
+                ->get();
+
+            $word->cloneRow('cat_no', $jatah->count());
+
+            foreach ($jatah as $i => $j) {
+                $idx = $i + 1;
+
+                $nama = $j->jenisCuti->nama_cuti;
+                $sisa = $j->sisa_cuti;
+                $terpakai = $j->cuti_terpakai;
+                $ket = "diambil {$terpakai} hari, sisa {$sisa} hari";
+
+                $word->setValue("cat_no#{$idx}", $idx);
+                $word->setValue("cat_nama#{$idx}", $nama);
+                $word->setValue("cat_sisa#{$idx}", $sisa);
+                $word->setValue("cat_ket#{$idx}", $ket);
+            }
+
+
+            $word->setValue('alamat_cuti', $cuti->pegawai->alamat_cuti ?? '-');
+            $word->setValue('telp', $cuti->pegawai->no_telp ?? '-');
+            $word->setValue('jenis_cuti_diambil', $cuti->jenisCuti->nama_cuti);
+
+            $atasanLangsungIds = [6, 7, 8, 10, 11, 12];
+
+            $riwayatAtasan = RiwayatCutiModel::where('ajukan_cuti_id', $cuti->id)
+                ->whereIn('user_id', $atasanLangsungIds)
+                ->orderBy('tanggal', 'desc')
+                ->first();
+            $setuju = "";
+            $tidakSetuju = "";
+
+            if ($riwayatAtasan) {
+                if ($riwayatAtasan->acc) {
+                    $setuju = "✔";
+                } else {
+                    $tidakSetuju = "✔";
+                }
+            }
+
+            $word->setValue('atasan_langsung_setuju', $setuju);
+            $word->setValue('atasan_langsung_tidak_setuju', $tidakSetuju);
+
+            $riwayatKetua = RiwayatCutiModel::where('ajukan_cuti_id', $cuti->id)
+                ->where('user_id', 1)
+                ->orderBy('tanggal', 'desc')
+                ->first();
+            $ketuaSetuju = "";
+            $ketuaTidakSetuju = "";
+
+            if ($riwayatKetua) {
+                if ($riwayatKetua->acc) {
+                    $ketuaSetuju = "✔";
+                } else {
+                    $ketuaTidakSetuju = "✔";
+                }
+            }
+
+            $word->setValue('ketua_setuju', $ketuaSetuju);
+            $word->setValue('ketua_tidak_setuju', $ketuaTidakSetuju);
+
+            Log::info("DEBUG Ketua", [
+                'riwayatKetua' => $riwayatKetua,
+                'ketuaSetuju' => $ketuaSetuju,
+                'ketuaTidakSetuju' => $ketuaTidakSetuju,
+            ]);
+
+
+            // tambahan
+            $word->setValue('tanggal', date('d F Y'));
+            $word->setValue('nomor_surat', $cuti->nomor_surat);
+
+            Log::info("Generate Word: semua placeholder sukses terisi");
+
+            // simpan hasil
+            $fileName = 'surat-cuti-' . $id . '.docx';
+            $outputPath = storage_path('app/public/' . $fileName);
+
+            $word->saveAs($outputPath);
+            Log::info("Generate Word: file berhasil disimpan", [
+                'output' => $outputPath
+            ]);
+
+            return response()->download($outputPath)->deleteFileAfterSend(true);
+        } catch (\Throwable $e) {
+            Log::error("Generate Word: error fatal", [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return abort(500, "Gagal menghasilkan dokumen.");
+        }
     }
 }
