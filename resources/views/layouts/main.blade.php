@@ -105,6 +105,20 @@
                         </a>
                     </li>
                     @endrole
+                    <!-- MASTER FORM SURAT -->
+                    <li>
+                        <a href="{{ route('master_formsurat') }}" 
+                           class="flex items-center p-3 rounded-xl transition duration-200
+                            {{ request()->routeIs('master_formsurat')
+                                ? 'bg-gradient-to-r from-[#842A3B] to-[#C95A6B] text-white shadow-md'
+                                : 'hover:bg-[#842A3B]/10 hover:text-[#842A3B] text-slate-600' }}">
+                    
+                            <i class="fa-solid fa-file-signature mr-3 
+                                {{ request()->routeIs('master_formsurat') ? 'text-white' : 'text-[#842A3B]' }}">
+                            </i>
+                            Master Form Surat
+                        </a>
+                    </li>
                     <!-- TRACKING CUTI -->
                     <li>
                         <a href="{{ route('tracking') }}" class="flex items-center p-3 rounded-xl transition duration-200

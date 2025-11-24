@@ -93,6 +93,81 @@
                 placeholder="Masukkan keterangan tambahan (opsional)"></textarea>
         </div>
 
+        <!-- ALAMAT PENGAJUAN CUTI -->
+        <div>
+            <label for="alamat_cuti" class="block text-sm font-semibold text-slate-600 mb-1">
+                Alamat Selama Cuti
+            </label>
+
+            <textarea id="alamat_cuti" name="alamat_cuti" rows="3"
+                class="w-full border border-gray-300 rounded-lg px-4 py-2.5 shadow-sm 
+                    focus:ring-2 focus:ring-[#C95A6B]/40 focus:border-[#C95A6B] 
+                    focus:outline-none transition resize-none"
+                placeholder="Masukkan alamat tempat tinggal selama cuti..." required></textarea>
+        </div>
+
+        <!-- TANDA TANGAN PEMOHON -->
+        <div>
+            <label class="block text-sm font-semibold text-[#842A3B] mb-3">
+                Tanda Tangan Pemohon
+            </label>
+
+            <div class="bg-[#FDFBFA] border border-gray-200 rounded-2xl shadow-lg p-6">
+
+                <!-- Header -->
+                <div class="flex items-center mb-4">
+                    <div class="h-10 w-10 flex items-center justify-center rounded-xl 
+                                bg-gradient-to-r from-[#842A3B] to-[#C95A6B] text-white shadow">
+                        <i class="fa-solid fa-signature text-lg"></i>
+                    </div>
+                    <h3 class="ml-3 text-lg font-bold text-[#842A3B]">
+                        Area Tanda Tangan
+                    </h3>
+                </div>
+
+                <hr class="border-gray-300 mb-5">
+
+                <!-- Toolbar -->
+                <div class="flex items-center justify-between mb-4">
+                    <p class="text-xs text-gray-500 italic">
+                        Gunakan mouse / layar sentuh untuk menandatangani
+                    </p>
+
+                    <div class="flex space-x-2">
+                        <button type="button" id="undo-signature"
+                            class="px-4 py-2 text-xs font-semibold rounded-lg 
+                                bg-gradient-to-r from-[#842A3B] to-[#B94A5B] 
+                                text-white shadow-md hover:shadow-lg hover:opacity-90 
+                                transition flex items-center">
+                            <i class="fa-solid fa-rotate-left mr-1"></i> Undo
+                        </button>
+                        <button type="button" id="clear-signature"
+                        class="px-4 py-2 text-xs font-semibold rounded-lg 
+                               bg-gradient-to-r from-[#B94A5B] to-[#C95A6B] 
+                               text-white shadow-md hover:shadow-lg hover:opacity-90 
+                               transition flex items-center">
+                        <i class="fa-solid fa-trash mr-1"></i> Clear
+                    </button>
+                    </div>
+                </div>
+
+                <!-- Canvas -->
+                <div class="flex justify-center">
+                    <div class="border-2 border-dashed border-gray-300 rounded-xl bg-white shadow-inner p-3">
+                        <canvas id="signature-canvas"
+                                width="480"
+                                height="200"
+                                class="rounded-lg shadow-sm">
+                        </canvas>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Base64 (hidden input) -->
+            <input type="hidden" name="ttd_pemohon" id="ttd_pemohon">
+        </div>
+
         <!-- TOMBOL -->
         <div class="flex justify-end space-x-4 pt-4">
             <a href="{{ url('/dashboard') }}"
@@ -214,6 +289,16 @@
 
                 const formData = new FormData(formCuti);
 
+                // validasi wajib isi tanda tangan
+                if (!document.getElementById("ttd_pemohon").value) {
+                    Swal.fire({
+                        icon: "warning",
+                        title: "Tanda tangan belum diisi",
+                        text: "Silakan tanda tangan terlebih dahulu sebelum mengajukan cuti.",
+                    });
+                    return;
+                }
+
                 fetch("{{ route('tambah_ajukan_cuti') }}", {
                         method: "POST",
                         headers: {
@@ -254,6 +339,101 @@
             });
         });
 </script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    
+        const canvas = document.getElementById("signature-canvas");
+        const ctx = canvas.getContext("2d");
+        const output = document.getElementById("ttd_pemohon");
+    
+        let drawing = false;
+        let strokes = [];
+        let currentStroke = [];
+    
+        // === MULAI MENGGAMBAR ===
+        canvas.addEventListener("mousedown", (e) => {
+            drawing = true;
+            currentStroke = [];
+    
+            const {x, y} = getPosition(e);
+            currentStroke.push({ x, y });
+        });
+    
+        canvas.addEventListener("mousemove", (e) => {
+            if (!drawing) return;
+    
+            const {x, y} = getPosition(e);
+            currentStroke.push({ x, y });
+    
+            ctx.lineWidth = 2;
+            ctx.lineCap = "round";
+            ctx.strokeStyle = "#000";
+    
+            let last = currentStroke[currentStroke.length - 2];
+            if (!last) return;
+    
+            ctx.beginPath();
+            ctx.moveTo(last.x, last.y);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+        });
+    
+        canvas.addEventListener("mouseup", () => {
+            drawing = false;
+            strokes.push(currentStroke);
+            saveSignature();
+        });
+    
+        canvas.addEventListener("mouseleave", () => drawing = false);
+    
+        // === FUNGSI DAPATKAN POSISI KURSOR ===
+        function getPosition(ev) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: ev.clientX - rect.left,
+                y: ev.clientY - rect.top
+            };
+        }
+    
+        // === UNDO ===
+        document.getElementById("undo-signature").onclick = () => {
+            strokes.pop();
+            redrawCanvas();
+            saveSignature();
+        };
+    
+        // === CLEAR ===
+        document.getElementById("clear-signature").onclick = () => {
+            strokes = [];
+            redrawCanvas();
+            output.value = "";
+        };
+    
+        // === RENDER ULANG ===
+        function redrawCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+            ctx.lineWidth = 2;
+            ctx.lineCap = "round";
+            ctx.strokeStyle = "#000";
+    
+            strokes.forEach(stroke => {
+                ctx.beginPath();
+                for (let i = 1; i < stroke.length; i++) {
+                    ctx.moveTo(stroke[i - 1].x, stroke[i - 1].y);
+                    ctx.lineTo(stroke[i].x, stroke[i].y);
+                }
+                ctx.stroke();
+            });
+        }
+    
+        // === SIMPAN BASE64 ===
+        function saveSignature() {
+            output.value = canvas.toDataURL("image/png");
+        }
+    });
+    </script>    
 
 @endpush
 @endsection

@@ -61,6 +61,14 @@ Route::middleware('auth')->group(function () {
     route::post('/aksi_kepegawaian', [CutiController::class, 'aksi_kepegawaian'])->name('aksi_kepegawaian');
     Route::get('/cuti/generate-word/{id}', [CutiController::class, 'generate_word'])->name('cuti.generate-word');
 
+    //AKSI MASTER FORM SURAT
+    Route::get('/master/formsurat', function () {
+        return view('master-formsurat');
+    })->name('master_formsurat');
+    // SIMPAN FORM SURAT
+    Route::post('/master/formsurat/simpan', [App\Http\Controllers\FormSuratController::class, 'simpan'])
+    ->name('simpan_formsurat');
+
     //TRACKING CUTI
     Route::get('/tracking', function () {
         return view('tracking');
