@@ -12,8 +12,9 @@ use App\Models\AjukanCutiModel;
 use App\Models\RiwayatCutiModel;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log as Log;
+use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpWord\TemplateProcessor;
+use Illuminate\Support\Facades\Log as Log;
 
 class CutiController extends Controller
 {
@@ -22,17 +23,55 @@ class CutiController extends Controller
         return view('detail_jatah_cuti', ['id' => $id]);
     }
 
+    // public function detail_pengajuan_cuti($id)
+    // {
+    //     $data = AjukanCutiModel::with('riwayatCutis')->find($id);
+    //     if (!$data) abort(404);
+
+    //     $userId = auth()->user()->id;
+    //     $sudahAcc = $data->riwayatCutis->contains('user_id', $userId);
+
+    //     return view('detail_pengajuan_cuti', compact('id', 'sudahAcc', 'data'));
+    // }
+
     public function detail_pengajuan_cuti($id)
     {
-        $data = AjukanCutiModel::with('riwayatCutis')->find($id);
+        $data = AjukanCutiModel::with('riwayatCutis.user')->find($id);
         if (!$data) abort(404);
 
-        $userId = auth()->user()->id;
-        $sudahAcc = $data->riwayatCutis->contains('user_id', $userId);
+        // semua level sudah di-ACC
+        $riwayat = $data->riwayatCutis;
+        $sudahAccPerLevel = [];
+        foreach (range(1, 4) as $lvl) {
+            $sudahAccPerLevel[$lvl] = $riwayat->contains(function ($r) use ($lvl) {
+                $userLevels = levels_for_user($r->user);
+                return in_array($lvl, $userLevels) && $r->acc == 1;
+            });
+        }
 
-        return view('detail_pengajuan_cuti', compact('id', 'sudahAcc', 'data'));
+        // level user saat ini
+        $userLevels = levels_for_user(auth()->user());
+
+        // **pakai helper baru**
+        $canActLevels = can_user_act_level($userLevels, $sudahAccPerLevel);
+        // dd([
+        //     'user_id' => auth()->user()->id,
+        //     'user_golongan' => auth()->user()->golongan,
+        //     'user_roles' => auth()->user()->getRoleNames()->toArray(),
+        //     'userLevels' => $userLevels,
+        //     'sudahAccPerLevel' => $sudahAccPerLevel,
+        //     'canActLevels' => $canActLevels,
+        //     'status_data' => $data->status,
+        // ]);
+
+        return view('detail_pengajuan_cuti', compact(
+            'id',
+            'data',
+            'sudahAccPerLevel',
+            'userLevels',
+            'canActLevels'
+        ));
     }
-
 
     public function list_ajukan_cuti()
     {

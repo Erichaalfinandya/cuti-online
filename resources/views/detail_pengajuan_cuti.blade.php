@@ -63,7 +63,7 @@
                         Alamat Selama Cuti
                     </label>
 
-                    <textarea id="alamat_cuti" id="alamat_cuti" name="alamat_cuti" rows="3" disabled  class="w-full border border-gray-300 rounded-lg px-4 py-2.5 shadow-sm
+                    <textarea id="alamat_cuti" id="alamat_cuti" name="alamat_cuti" rows="3" disabled class="w-full border border-gray-300 rounded-lg px-4 py-2.5 shadow-sm
                     focus:ring-2 focus:ring-[#C95A6B]/40 focus:border-[#C95A6B]
                     focus:outline-none transition resize-none"
                         placeholder="Masukkan alamat tempat tinggal selama cuti..." required></textarea>
@@ -73,17 +73,21 @@
         </div>
         <div class="col-6">
             {{-- AKSI KEPEGAWAIAN --}}
-            @hasanyrole('kepegawaian|sekretaris|panitera|panmud_1|panmud_2|panmud_3|kasubbag_1|kasubbag_2|kasubbag_3|ketua')
+
             {{-- @if(!$sudahAcc) --}}
-            @if(!$sudahAcc && $data->status == status_required_for(auth()->user()->golongan))
-            <div class="row">
+            {{-- @if(!$sudahAcc && $data->status == status_required_for(auth()->user()->golongan)) --}}
+            {{-- @if(!$sudahAcc && in_array($data->status, levels_for_user(auth()->user()))) --}}
+            @hasanyrole('kepegawaian|sekretaris|panitera|panmud_1|panmud_2|panmud_3|kasubbag_1|kasubbag_2|kasubbag_3|ketua')
+
+            @foreach ($canActLevels as $level)
+            @if(!$sudahAccPerLevel[$level] && $data->status <= $level) <div class="row">
                 <div class="col-12">
                     <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-8 mt-6">
                         <form method="POST" action="{{ route('aksi_kepegawaian') }}" id="form-aksi">
                             @csrf
                             <input type="hidden" name="ajukan_cuti_id" value="{{ $id }}">
                             <h2>Persetujuan</h2>
-                            {{-- @role('kepegawaian') --}}
+
                             <div class="mb-4">
                                 <div class="flex items-center space-x-4">
                                     <label class="inline-flex items-center">
@@ -104,7 +108,7 @@
                                         class="w-full border border-gray-300 rounded-lg px-4 py-2.5 shadow-sm focus:outline-none"></textarea>
                                 </div>
                             </div>
-                            {{-- @endrole --}}
+
                             <div class="mb-4">
                                 <div class="flex items-center space-x-4">
                                     <button class="btn btn-success">Simpan</button>
@@ -113,29 +117,32 @@
                         </form>
                     </div>
                 </div>
-            </div>
-            @endif
-            @endhasanyrole
-            <div class="row">
-                <div class="col-12">
-                    <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-8 mt-6">
-                        <h2>Riwayat Persetujuan</h2>
-                        <div class="mb-4">
-                            <div class="flex items-center space-x-4">
-                                <button onclick="window.location.href='{{ route('cuti.generate-word', $data->id) }}'"
-                                    class="btn btn-success">
-                                    Download Surat Cuti
-                                </button>
-                            </div>
+        </div>
+        @endif
+        @endforeach
+
+        @endhasanyrole
+
+        <div class="row">
+            <div class="col-12">
+                <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-8 mt-6">
+                    <h2>Riwayat Persetujuan</h2>
+                    <div class="mb-4">
+                        <div class="flex items-center space-x-4">
+                            <button onclick="window.location.href='{{ route('cuti.generate-word', $data->id) }}'"
+                                class="btn btn-success">
+                                Download Surat Cuti
+                            </button>
                         </div>
-                        <div id="riwayat-container">
-                            <p class="text-gray-500">Belum ada riwayat persetujuan.</p>
-                        </div>
+                    </div>
+                    <div id="riwayat-container">
+                        <p class="text-gray-500">Belum ada riwayat persetujuan.</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
 </div>
 <!-- Scripts -->

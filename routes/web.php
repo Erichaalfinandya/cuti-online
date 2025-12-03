@@ -29,6 +29,18 @@ Route::middleware('auth')->group(function () {
         return view('dashboard');
     });
 
+    Route::get('/debug-role', function () {
+        $user = auth()->user();
+
+        return [
+            'id' => $user->id,
+            'golongan' => $user->golongan,
+            'roles' => $user->getRoleNames(),
+            'level_terbaca' => levels_for_user($user),
+        ];
+    });
+
+
     //MASTER JENIS CUTI
     Route::get('/master_jenis_cuti', [CutiController::class, 'master_jenis_cuti'])->name('master_jenis_cuti');
     Route::get('/getJenisCuti', [CutiController::class, 'getJenisCuti'])->name('getJenisCuti');
@@ -67,11 +79,10 @@ Route::middleware('auth')->group(function () {
     })->name('master_formsurat');
     // SIMPAN FORM SURAT
     Route::post('/master/formsurat/simpan', [App\Http\Controllers\FormSuratController::class, 'simpan'])
-    ->name('simpan_formsurat');
+        ->name('simpan_formsurat');
 
     //TRACKING CUTI
     Route::get('/tracking', function () {
         return view('tracking');
     })->name('tracking');
-
 });
