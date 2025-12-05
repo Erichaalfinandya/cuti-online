@@ -210,12 +210,19 @@
                     <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-8 mt-6">
                         <h2>Riwayat Persetujuan</h2>
                         <div class="mb-4">
+                            @php
+                            // Ambil semua role yang sudah ACC
+                            $roleSudahAcc = $data->riwayatCutis->pluck('role_name')->toArray();
+                            @endphp
+
+                            @if(in_array('ketua', $roleSudahAcc))
                             <div class="flex items-center space-x-4">
                                 <button onclick="window.location.href='{{ route('cuti.generate-word', $data->id) }}'"
                                     class="btn btn-success">
                                     Download Surat Cuti
                                 </button>
                             </div>
+                            @endif
                         </div>
                         <div id="riwayat-container">
                             <p class="text-gray-500">Belum ada riwayat persetujuan.</p>

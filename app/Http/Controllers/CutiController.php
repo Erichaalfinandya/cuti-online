@@ -738,7 +738,7 @@ class CutiController extends Controller
             }
 
 
-            $word->setValue('alamat_cuti', $cuti->pegawai->alamat_cuti ?? '-');
+            $word->setValue('alamat_cuti', $cuti->alamat_cuti ?? '-');
             $word->setValue('telp', $cuti->pegawai->no_telp ?? '-');
             $word->setValue('jenis_cuti_diambil', $cuti->jenisCuti->nama_cuti);
 
