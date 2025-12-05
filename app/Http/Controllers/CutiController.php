@@ -38,19 +38,99 @@ class CutiController extends Controller
 
     public function detail_pengajuan_cuti($id)
     {
-        $data = AjukanCutiModel::with('riwayatCutis')->find($id);
+        $data = AjukanCutiModel::with(['riwayatCutis', 'user'])->find($id);
         if (!$data) abort(404);
 
+        // User yang sedang login
         $userRoles = auth()->user()->getRoleNames()->toArray();
 
-        // Ambil semua role yang sudah ACC
+        // Golongan si pengaju cuti
+        $pengaju = $data->user;
+        $golongan = strtolower($pengaju->golongan ?? '');
+
+        // Tentukan jalur hirarki berdasarkan golongan pengaju
+        switch (true) {
+
+            // 1. Staf sekretaris 1/2/3
+            case str_starts_with($golongan, 'staf_sekretaris_'):
+                preg_match('/(\d+)/', $golongan, $m);
+                $idx = $m[1] ?? 1;
+                $hirarki = [
+                    'kepegawaian',
+                    "kasubbag_{$idx}",
+                    'sekretaris',
+                    'ketua',
+                ];
+                break;
+
+            // 2. Staf panitera 1/2/3
+            case str_starts_with($golongan, 'staf_panitera_'):
+                preg_match('/(\d+)/', $golongan, $m);
+                $idx = $m[1] ?? 1;
+                $hirarki = [
+                    'kepegawaian',
+                    "panmud_{$idx}",
+                    'panitera',
+                    'ketua',
+                ];
+                break;
+
+            // 3. Kasubbag / kasubbag_1/2/3
+            case str_starts_with($golongan, 'kasubbag'):
+                $hirarki = [
+                    'kepegawaian',
+                    'sekretaris',
+                    'ketua',
+                ];
+                break;
+
+            // 4. Panmud / panmud_1/2/3
+            case str_starts_with($golongan, 'panmud'):
+                $hirarki = [
+                    'kepegawaian',
+                    'panitera',
+                    'ketua',
+                ];
+                break;
+
+            // 5. Panitera / Sekretaris / Hakim
+            case in_array($golongan, ['panitera', 'sekretaris', 'hakim']):
+                $hirarki = [
+                    'kepegawaian',
+                    'ketua',
+                ];
+                break;
+
+            // fallback kalau golongan tidak jelas
+            default:
+                $hirarki = [
+                    'kepegawaian',
+                    'ketua',
+                ];
+                break;
+        }
+
+        // Riwayat acc yang sudah ada
         $roleSudahAcc = $data->riwayatCutis->pluck('role_name')->toArray();
 
-        // Selisihkan: role user yang belum ACC
-        $rolesBelumAcc = array_diff($userRoles, $roleSudahAcc);
+        // Cari role selanjutnya
+        $roleNext = null;
+        foreach ($hirarki as $r) {
+            if (!in_array($r, $roleSudahAcc)) {
+                $roleNext = $r;
+                break;
+            }
+        }
 
-        // dd(compact('id', 'data', 'rolesBelumAcc'));
-        return view('detail_pengajuan_cuti', compact('id', 'data', 'rolesBelumAcc'));
+        // User boleh acc kalau roleNext ada di role user login
+        $bolehAcc = in_array($roleNext, $userRoles);
+
+        return view('detail_pengajuan_cuti', compact(
+            'id',
+            'data',
+            'roleNext',
+            'bolehAcc'
+        ));
     }
 
 

@@ -86,7 +86,7 @@
             $userRoles = auth()->user()->getRoleNames()->toArray();
             @endphp
 
-            @if(array_intersect($userRoles, $rolesBelumAcc))
+            @if($bolehAcc)
 
             <div class="row">
                 <div class="col-12">
@@ -203,8 +203,6 @@
                 </div>
             </div>
             @endif
-            {{-- @endforeach --}}
-
             @endhasanyrole
 
             <div class="row">
