@@ -75,17 +75,101 @@
             {{-- AKSI KEPEGAWAIAN --}}
 
             {{-- @if(!$sudahAcc) --}}
-            {{-- @if(!$sudahAcc && $data->status == status_required_for(auth()->user()->golongan)) --}}
-            {{-- @if(!$sudahAcc && in_array($data->status, levels_for_user(auth()->user()))) --}}
-            @hasanyrole('kepegawaian|sekretaris|panitera|panmud_1|panmud_2|panmud_3|kasubbag_1|kasubbag_2|kasubbag_3|ketua')
 
-            @foreach ($canActLevels as $level)
-            @if(!$sudahAccPerLevel[$level] && $data->status <= $level) <div class="row">
+            {{-- @if(!$sudahAcc && in_array($data->status, levels_for_user(auth()->user()))) --}}{{-- @if(!$sudahAcc &&
+            $data->status == status_required_for(auth()->user()->golongan)) --}}
+            {{-- @foreach ($canActLevels as $level) --}}
+            {{-- @if(!$sudahAccPerLevel[$level]) --}}
+            {{-- @if($bolehAcc) --}}
+            @hasanyrole('kepegawaian|sekretaris|panitera|panmud_1|panmud_2|panmud_3|kasubbag_1|kasubbag_2|kasubbag_3|ketua')
+            @php
+            $userRoles = auth()->user()->getRoleNames()->toArray();
+            @endphp
+
+            @if(array_intersect($userRoles, $rolesBelumAcc))
+
+            <div class="row">
                 <div class="col-12">
                     <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-8 mt-6">
                         <form method="POST" action="{{ route('aksi_kepegawaian') }}" id="form-aksi">
                             @csrf
                             <input type="hidden" name="ajukan_cuti_id" value="{{ $id }}">
+                            @role('ketua')
+                            <input type="hidden" name="role_name" value="ketua">
+                            @endrole
+
+                            @role('hakim')
+                            <input type="hidden" name="role_name" value="hakim">
+                            @endrole
+
+                            @role('panitera')
+                            <input type="hidden" name="role_name" value="panitera">
+                            @endrole
+
+                            @role('sekretaris')
+                            <input type="hidden" name="role_name" value="sekretaris">
+                            @endrole
+
+                            @role('panmud')
+                            <input type="hidden" name="role_name" value="panmud">
+                            @endrole
+
+                            @role('panmud_1')
+                            <input type="hidden" name="role_name" value="panmud_1">
+                            @endrole
+
+                            @role('panmud_2')
+                            <input type="hidden" name="role_name" value="panmud_2">
+                            @endrole
+
+                            @role('panmud_3')
+                            <input type="hidden" name="role_name" value="panmud_3">
+                            @endrole
+
+                            @role('kasubbag')
+                            <input type="hidden" name="role_name" value="kasubbag">
+                            @endrole
+
+                            @role('kasubbag_1')
+                            <input type="hidden" name="role_name" value="kasubbag_1">
+                            @endrole
+
+                            @role('kasubbag_2')
+                            <input type="hidden" name="role_name" value="kasubbag_2">
+                            @endrole
+
+                            @role('kasubbag_3')
+                            <input type="hidden" name="role_name" value="kasubbag_3">
+                            @endrole
+
+                            @role('staf_panitera_3')
+                            <input type="hidden" name="role_name" value="staf_panitera_3">
+                            @endrole
+
+                            @role('staf_panitera_1')
+                            <input type="hidden" name="role_name" value="staf_panitera_1">
+                            @endrole
+
+                            @role('staf_panitera_2')
+                            <input type="hidden" name="role_name" value="staf_panitera_2">
+                            @endrole
+
+                            @role('staf_sekretaris_1')
+                            <input type="hidden" name="role_name" value="staf_sekretaris_1">
+                            @endrole
+
+                            @role('staf_sekretaris_2')
+                            <input type="hidden" name="role_name" value="staf_sekretaris_2">
+                            @endrole
+
+                            @role('staf_sekretaris_3')
+                            <input type="hidden" name="role_name" value="staf_sekretaris_3">
+                            @endrole
+
+                            @role('kepegawaian')
+                            <input type="hidden" name="role_name" value="kepegawaian">
+                            @endrole
+
                             <h2>Persetujuan</h2>
 
                             <div class="mb-4">
@@ -117,32 +201,32 @@
                         </form>
                     </div>
                 </div>
-        </div>
-        @endif
-        @endforeach
+            </div>
+            @endif
+            {{-- @endforeach --}}
 
-        @endhasanyrole
+            @endhasanyrole
 
-        <div class="row">
-            <div class="col-12">
-                <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-8 mt-6">
-                    <h2>Riwayat Persetujuan</h2>
-                    <div class="mb-4">
-                        <div class="flex items-center space-x-4">
-                            <button onclick="window.location.href='{{ route('cuti.generate-word', $data->id) }}'"
-                                class="btn btn-success">
-                                Download Surat Cuti
-                            </button>
+            <div class="row">
+                <div class="col-12">
+                    <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-8 mt-6">
+                        <h2>Riwayat Persetujuan</h2>
+                        <div class="mb-4">
+                            <div class="flex items-center space-x-4">
+                                <button onclick="window.location.href='{{ route('cuti.generate-word', $data->id) }}'"
+                                    class="btn btn-success">
+                                    Download Surat Cuti
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                    <div id="riwayat-container">
-                        <p class="text-gray-500">Belum ada riwayat persetujuan.</p>
+                        <div id="riwayat-container">
+                            <p class="text-gray-500">Belum ada riwayat persetujuan.</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
 </div>
 <!-- Scripts -->

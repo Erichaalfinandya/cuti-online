@@ -28,50 +28,32 @@ class CutiController extends Controller
     //     $data = AjukanCutiModel::with('riwayatCutis')->find($id);
     //     if (!$data) abort(404);
 
-    //     $userId = auth()->user()->id;
-    //     $sudahAcc = $data->riwayatCutis->contains('user_id', $userId);
+    //     $userRoles = auth()->user()->getRoleNames();
+    //     $sudahAcc = $data->riwayatCutis->contains(function ($item) use ($userRoles) {
+    //         return in_array($item->role_name, $userRoles->toArray());
+    //     });
 
     //     return view('detail_pengajuan_cuti', compact('id', 'sudahAcc', 'data'));
     // }
 
     public function detail_pengajuan_cuti($id)
     {
-        $data = AjukanCutiModel::with('riwayatCutis.user')->find($id);
+        $data = AjukanCutiModel::with('riwayatCutis')->find($id);
         if (!$data) abort(404);
 
-        // semua level sudah di-ACC
-        $riwayat = $data->riwayatCutis;
-        $sudahAccPerLevel = [];
-        foreach (range(1, 4) as $lvl) {
-            $sudahAccPerLevel[$lvl] = $riwayat->contains(function ($r) use ($lvl) {
-                $userLevels = levels_for_user($r->user);
-                return in_array($lvl, $userLevels) && $r->acc == 1;
-            });
-        }
+        $userRoles = auth()->user()->getRoleNames()->toArray();
 
-        // level user saat ini
-        $userLevels = levels_for_user(auth()->user());
+        // Ambil semua role yang sudah ACC
+        $roleSudahAcc = $data->riwayatCutis->pluck('role_name')->toArray();
 
-        // **pakai helper baru**
-        $canActLevels = can_user_act_level($userLevels, $sudahAccPerLevel);
-        // dd([
-        //     'user_id' => auth()->user()->id,
-        //     'user_golongan' => auth()->user()->golongan,
-        //     'user_roles' => auth()->user()->getRoleNames()->toArray(),
-        //     'userLevels' => $userLevels,
-        //     'sudahAccPerLevel' => $sudahAccPerLevel,
-        //     'canActLevels' => $canActLevels,
-        //     'status_data' => $data->status,
-        // ]);
+        // Selisihkan: role user yang belum ACC
+        $rolesBelumAcc = array_diff($userRoles, $roleSudahAcc);
 
-        return view('detail_pengajuan_cuti', compact(
-            'id',
-            'data',
-            'sudahAccPerLevel',
-            'userLevels',
-            'canActLevels'
-        ));
+        // dd(compact('id', 'data', 'rolesBelumAcc'));
+        return view('detail_pengajuan_cuti', compact('id', 'data', 'rolesBelumAcc'));
     }
+
+
 
     public function list_ajukan_cuti()
     {
@@ -536,25 +518,53 @@ class CutiController extends Controller
             'ajukan_cuti_id' => 'required|exists:ajukan_cutis,id',
             'acc' => 'required|boolean',
             'keterangan' => 'nullable|string|max:255',
+            'role_name' => 'required|string',
         ]);
 
         $user = auth()->user();
+        $userRoles = $user->getRoleNames()->toArray();
 
+        // Ambil role yang sudah ACC pada cuti ini
+        $roleSudahAcc = RiwayatCutiModel::where('ajukan_cuti_id', $validated['ajukan_cuti_id'])
+            ->pluck('role_name')
+            ->toArray();
+
+        // Cari role user yang belum ACC
+        $rolesBelumAcc = array_values(array_diff($userRoles, $roleSudahAcc));
+
+        // Tentukan role yang dipakai
+        $roleNameDipakai = $validated['role_name'];
+
+        // Kalau role dikirim FE sudah pernah dipakai, ganti role-nya
+        if (in_array($roleNameDipakai, $roleSudahAcc)) {
+            if (count($rolesBelumAcc) > 0) {
+                $roleNameDipakai = $rolesBelumAcc[0];
+            } else {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Semua role Anda sudah melakukan ACC.'
+                ], 400);
+            }
+        }
+
+        // Data riwayat ACC
         $data = [
             'tanggal' => now(),
             'user_id' => $user->id,
+            'role_name' => $roleNameDipakai,
             'ajukan_cuti_id' => $validated['ajukan_cuti_id'],
             'acc' => $validated['acc'],
             'keterangan' => $validated['keterangan'] ?? null,
         ];
 
-        // Simpan ke tabel riwayat cuti
+        // Simpan riwayat cuti
         $riwayat = RiwayatCutiModel::create($data);
 
         // Tentukan status baru berdasarkan golongan/jabatan user login
         $status = match (strtolower(trim($user->golongan ?? ''))) {
             'kepegawaian' => 2,
-            'kasubbag_1', 'kasubbag_2', 'kasubbag_3', 'panmud_1', 'panmud_2', 'panmud_3' => 3,
+            'kasubbag_1', 'kasubbag_2', 'kasubbag_3',
+            'panmud_1', 'panmud_2', 'panmud_3' => 3,
             'panitera', 'sekretaris' => 4,
             'ketua' => 5,
             default => 1,
@@ -566,7 +576,7 @@ class CutiController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Aksi kepegawaian berhasil disimpan dan status cuti diperbarui!',
+            'message' => 'Aksi berhasil disimpan dan status cuti diperbarui!',
             'data' => $riwayat
         ]);
     }
