@@ -20,6 +20,7 @@ return new class extends Migration
             $table->foreignId('ajukan_cuti_id')->constrained('ajukan_cutis')->onDelete('cascade');
             $table->boolean('acc');
             $table->string('keterangan')->nullable();
+            $table->string('ttd')->nullable();
             $table->timestamps();
         });
     }

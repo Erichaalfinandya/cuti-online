@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\JatahCutiModel;
 use App\Models\JenisCutiModel;
 use App\Models\AjukanCutiModel;
+use App\Models\NomorSuratModel;
 use App\Models\RiwayatCutiModel;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -806,7 +807,12 @@ class CutiController extends Controller
 
             // tambahan
             $word->setValue('tanggal', date('d F Y'));
-            $word->setValue('nomor_surat', $cuti->nomor_surat);
+
+            $no_surat = NomorSuratModel::first()->no_surat;
+            $ai = str_pad($cuti->id, 4, '0', STR_PAD_LEFT); // misal 1 -> "0001"
+            $nomorSurat = $ai . $no_surat;
+
+            $word->setValue('nomor_surat', $nomorSurat);
 
             Log::info("Generate Word: semua placeholder sukses terisi");
 
@@ -828,5 +834,34 @@ class CutiController extends Controller
 
             return abort(500, "Gagal menghasilkan dokumen.");
         }
+    }
+
+    public function nomor_surat()
+    {
+        $data = NomorSuratModel::first(); // ambil baris tunggal
+
+        return view('master-formsurat', compact('data'));
+    }
+
+
+    public function tambah_nomor_surat(Request $request)
+    {
+        $request->validate([
+            'no_surat' => 'required|string|max:100',
+        ]);
+
+        // Ambil baris tunggal
+        $data = NomorSuratModel::firstOrFail();
+
+        // Update nomor surat
+        $data->update([
+            'no_surat' => $request->no_surat,
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Nomor Surat berhasil diperbarui!',
+            'data' => $data
+        ]);
     }
 }

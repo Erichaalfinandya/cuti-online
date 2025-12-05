@@ -8,25 +8,24 @@
     <!-- HEADER -->
     <div class="flex items-center justify-between mb-8">
         <h2 class="text-3xl font-bold text-[#842A3B] flex items-center">
-            <i class="fa-solid fa-file-signature mr-3 text-[#842A3B]"></i> 
+            <i class="fa-solid fa-file-signature mr-3 text-[#842A3B]"></i>
             Master Form Surat
         </h2>
     </div>
 
     <!-- FORM -->
-    <form method="POST" action="{{ route('simpan_formsurat') }}" enctype="multipart/form-data" class="space-y-10">
+    <form id="tambah-no-surat" class="space-y-10">
         @csrf
-
         <!-- NOMOR SURAT -->
         <div class="bg-[#F8F6F7] p-6 rounded-xl border border-gray-200 shadow-sm">
             <label for="nomor_surat" class="block text-sm font-semibold text-[#842A3B] mb-2">
                 Nomor Surat
             </label>
-            <input type="text" name="nomor_surat" id="nomor_surat"
-                class="w-full border border-gray-300 rounded-lg px-4 py-3 shadow-sm bg-white 
-                focus:ring-2 focus:ring-[#C95A6B]/40 focus:border-[#C95A6B]"
-                placeholder="Masukkan nomor surat..." required>
+            <input type="text" name="no_surat" id="no_surat" class="w-full border border-gray-300 rounded-lg px-4 py-3 shadow-sm bg-white
+                focus:ring-2 focus:ring-[#C95A6B]/40 focus:border-[#C95A6B]" placeholder="Masukkan nomor surat..."
+                required value="{{ $data->no_surat ?? '' }}">
         </div>
+
 
         <!-- TTD KETUA -->
         <div class="bg-[#F8F6F7] p-6 rounded-xl border border-gray-200 shadow-sm">
@@ -37,18 +36,15 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Input -->
                 <div>
-                    <input type="file" name="ttd_ketua" accept="image/*"
-                        class="block w-full border border-gray-300 rounded-lg p-3 bg-white cursor-pointer
-                        focus:ring-2 focus:ring-[#C95A6B]/40"
-                        onchange="previewImage(event, 'ketua')">
+                    <input type="file" name="ttd_ketua" accept="image/*" class="block w-full border border-gray-300 rounded-lg p-3 bg-white cursor-pointer
+                        focus:ring-2 focus:ring-[#C95A6B]/40" onchange="previewImage(event, 'ketua')">
                 </div>
 
                 <!-- Preview -->
                 <div class="flex justify-center">
                     <div id="wrap_ketua" class="relative hidden">
                         <img id="preview_ketua" class="w-40 rounded-lg shadow border border-gray-200">
-                        <button type="button" onclick="removePreview('ketua')"
-                            class="absolute -top-2 -right-2 bg-red-600 text-white w-6 h-6 
+                        <button type="button" onclick="removePreview('ketua')" class="absolute -top-2 -right-2 bg-red-600 text-white w-6 h-6
                             rounded-full flex items-center justify-center shadow hover:bg-red-700">
                             ×
                         </button>
@@ -70,16 +66,13 @@
                         Panitera {{ $num }}
                     </label>
 
-                    <input type="file" 
-                        name="ttd_panitera{{ $num }}" 
-                        accept="image/*"
+                    <input type="file" name="ttd_panitera{{ $num }}" accept="image/*"
                         class="block w-full border border-gray-300 rounded-lg p-3 bg-white cursor-pointer"
                         onchange="previewImage(event, 'panitera{{ $num }}')">
 
                     <div id="wrap_panitera{{ $num }}" class="relative w-32 mt-3 mx-auto hidden">
                         <img id="preview_panitera{{ $num }}" class="w-full rounded-lg shadow border border-gray-200">
-                        <button type="button" onclick="removePreview('panitera{{ $num }}')"
-                            class="absolute -top-2 -right-2 bg-red-600 text-white w-6 h-6 rounded-full 
+                        <button type="button" onclick="removePreview('panitera{{ $num }}')" class="absolute -top-2 -right-2 bg-red-600 text-white w-6 h-6 rounded-full
                             flex items-center justify-center shadow hover:bg-red-700">
                             ×
                         </button>
@@ -108,8 +101,7 @@
 
                     <div id="wrap_kasubbag{{ $num }}" class="relative w-32 mt-3 mx-auto hidden">
                         <img id="preview_kasubbag{{ $num }}" class="w-full rounded-lg shadow border border-gray-200">
-                        <button type="button" onclick="removePreview('kasubbag{{ $num }}')"
-                            class="absolute -top-2 -right-2 bg-red-600 text-white w-6 h-6 rounded-full 
+                        <button type="button" onclick="removePreview('kasubbag{{ $num }}')" class="absolute -top-2 -right-2 bg-red-600 text-white w-6 h-6 rounded-full
                             flex items-center justify-center shadow hover:bg-red-700">
                             ×
                         </button>
@@ -126,9 +118,8 @@
                 <i class="fa-solid fa-arrow-left mr-2"></i> Kembali
             </a>
 
-            <button type="submit"
-                class="px-7 py-3 bg-gradient-to-r from-[#842A3B] via-[#B94A5B] to-[#C95A6B] 
-                text-white rounded-lg shadow-md hover:shadow-lg hover:opacity-90 
+            <button type="submit" class="px-7 py-3 bg-gradient-to-r from-[#842A3B] via-[#B94A5B] to-[#C95A6B]
+                text-white rounded-lg shadow-md hover:shadow-lg hover:opacity-90
                 transition font-semibold flex items-center">
                 <i class="fa-solid fa-save mr-2"></i> Simpan
             </button>
@@ -138,8 +129,13 @@
 </div>
 
 <!-- SCRIPT -->
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.datatables.net/2.0.3/js/dataTables.min.js"></script>
+
 <script>
-function previewImage(event, id) {
+    function previewImage(event, id) {
     const wrap = document.getElementById("wrap_" + id);
     const img = document.getElementById("preview_" + id);
     img.src = URL.createObjectURL(event.target.files[0]);
@@ -153,4 +149,57 @@ function removePreview(id) {
     input.value = "";
 }
 </script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const formNoSurat = document.getElementById("tambah-no-surat");
+
+    formNoSurat.addEventListener("submit", function (e) {
+        e.preventDefault(); // elah jangan reload-reload
+
+        const formData = new FormData(formNoSurat);
+
+        fetch("{{ route('tambah_nomor_surat') }}", {
+            method: "POST",
+            headers: {
+                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                "Accept": "application/json",
+            },
+            body: formData,
+        })
+            .then(async (response) => {
+                const data = await response.json();
+
+                if (response.ok && data.status === "success") {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Berhasil!",
+                        text: data.message,
+                        timer: 1500,
+                        showConfirmButton: false,
+                    });
+
+                    // Reload halaman setelah swal selesai
+                    setTimeout(() => {
+                    location.reload();
+                    }, 1500);
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Gagal memperbarui",
+                        text: data.message || "Input tidak valid.",
+                    });
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+                Swal.fire({
+                    icon: "error",
+                    title: "Kesalahan server",
+                    text: "Ada masalah di server. Coba lagi nanti.",
+                });
+            });
+    });
+});
+</script>
+
 @endsection

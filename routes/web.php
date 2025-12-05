@@ -29,18 +29,6 @@ Route::middleware('auth')->group(function () {
         return view('dashboard');
     });
 
-    Route::get('/debug-role', function () {
-        $user = auth()->user();
-
-        return [
-            'id' => $user->id,
-            'golongan' => $user->golongan,
-            'roles' => $user->getRoleNames(),
-            'level_terbaca' => levels_for_user($user),
-        ];
-    });
-
-
     //MASTER JENIS CUTI
     Route::get('/master_jenis_cuti', [CutiController::class, 'master_jenis_cuti'])->name('master_jenis_cuti');
     Route::get('/getJenisCuti', [CutiController::class, 'getJenisCuti'])->name('getJenisCuti');
@@ -74,12 +62,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/cuti/generate-word/{id}', [CutiController::class, 'generate_word'])->name('cuti.generate-word');
 
     //AKSI MASTER FORM SURAT
-    Route::get('/master/formsurat', function () {
-        return view('master-formsurat');
-    })->name('master_formsurat');
-    // SIMPAN FORM SURAT
-    Route::post('/master/formsurat/simpan', [App\Http\Controllers\FormSuratController::class, 'simpan'])
-        ->name('simpan_formsurat');
+    Route::post('/tambah_nomor_surat', [CutiController::class, 'tambah_nomor_surat'])->name('tambah_nomor_surat');
+    Route::get('/master/formsurat', [CutiController::class, 'nomor_surat'])->name('nomor_surat');
 
     //TRACKING CUTI
     Route::get('/tracking', function () {

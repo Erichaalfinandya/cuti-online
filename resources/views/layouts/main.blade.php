@@ -108,7 +108,7 @@
                     <!-- MASTER FORM SURAT -->
                     @role('kepegawaian')
                     <li>
-                        <a href="{{ route('master_formsurat') }}"
+                        <a href="{{ route('nomor_surat') }}"
                            class="flex items-center p-3 rounded-xl transition duration-200
                             {{ request()->routeIs('master_formsurat')
                                 ? 'bg-gradient-to-r from-[#842A3B] to-[#C95A6B] text-white shadow-md'
